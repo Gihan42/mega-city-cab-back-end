@@ -119,7 +119,6 @@ public class userServiceImpl implements userService {
             User save = userRepo.save(map);
 
             UserRoles byRole = userRolesRepo.findByRole(dto.getRole());
-            System.out.println(byRole);
 
             LoginResponse loginResponse = new LoginResponse();
 
@@ -143,5 +142,37 @@ public class userServiceImpl implements userService {
             }
         }
         throw new BadCredentialsException("User Already Exist");
+    }
+
+    @Override
+    public User updateUser(userDto dto, String type) {
+        if (!type.equals("User")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        User userById = userRepo.getUserById(dto.getId());
+        System.out.println("user="+userById);
+        if(!Objects.equals(userById,null)){
+            User map = modelMapper.map(dto, User.class);
+            map.setStatus("1");
+            map.setPassword(userById.getPassword());
+            return  userRepo.save(map);
+
+        }
+        throw new RuntimeException("user not Exist!");
+    }
+
+    @Override
+    public User deleteUser(Long userId ,String type) {
+        if (!type.equals("User") && !type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        User userById = userRepo.getUserById(userId);
+        if(!Objects.equals(userById,null)){
+            userRoleDetailsService.deleteUserRoleDetails(userId);
+            userRepo.delete(userById);
+            return userById;
+
+        }
+        throw new RuntimeException("user id is invalid");
     }
 }

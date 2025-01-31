@@ -9,5 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface UserRepo extends JpaRepository<User,Long> {
     @Query(value = "select * from user where email =?1 and status='1'", nativeQuery = true)
     User getUserByEmail(String email);
+
+    @Query(value = "select * from user where user_id=?1 and status='1'", nativeQuery = true)
+    User getUserById(Long userId);
 }
 
