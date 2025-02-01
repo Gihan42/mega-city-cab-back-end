@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/user")
 @CrossOrigin(origins = "*",allowedHeaders = "*")
@@ -54,6 +56,16 @@ public class userController {
                 new StandardResponse(200,"User Deleted",user),
                 HttpStatus.OK
         );
+    }
+
+    @GetMapping(path = "/allUsers")
+    public ResponseEntity<StandardResponse> getAllUser(@RequestAttribute String type){
+        List<userDto> allUser = userService.getAllUser(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"all users",allUser),
+                HttpStatus.OK
+        );
+
     }
 
 }

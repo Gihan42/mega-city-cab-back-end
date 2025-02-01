@@ -14,6 +14,7 @@ import com.mega.city.cab.backend.service.userService;
 import com.mega.city.cab.backend.util.JwtUtil;
 import com.mega.city.cab.backend.util.response.LoginResponse;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -174,5 +175,13 @@ public class userServiceImpl implements userService {
 
         }
         throw new RuntimeException("user id is invalid");
+    }
+
+    @Override
+    public List<userDto> getAllUser(String type) {
+        if (!type.equals("User") && !type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        return modelMapper.map(userRepo.getAllUser(),new TypeToken<List<userDto>>() {}.getType());
     }
 }
