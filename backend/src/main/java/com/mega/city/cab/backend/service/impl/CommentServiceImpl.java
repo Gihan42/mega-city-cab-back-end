@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
             Comments map = modelMapper.map(dto, Comments.class);
             return commentRepo.save(map);
         }
-       throw new RuntimeException("user not exist");
+       throw new RuntimeException("user is exist");
     }
 
     @Override

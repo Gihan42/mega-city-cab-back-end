@@ -40,7 +40,8 @@ public class userController {
         );
     }
     @PutMapping(path = "/update")
-    public ResponseEntity<StandardResponse> updateUser(@RequestBody userDto dto,@RequestAttribute String type){
+    public ResponseEntity<StandardResponse> updateUser(@RequestBody userDto dto,
+                                                       @RequestAttribute String type){
         User user = userService.updateUser(dto, type);
         return new ResponseEntity<>(
                 new StandardResponse(200,"User Updated",user),
@@ -66,6 +67,15 @@ public class userController {
                 HttpStatus.OK
         );
 
+    }
+
+    @GetMapping(path = "/count")
+    public  ResponseEntity<StandardResponse> countUser(@RequestAttribute String type){
+        int count = userService.getUserCount(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"User Count",count),
+                HttpStatus.OK
+        );
     }
 
 }

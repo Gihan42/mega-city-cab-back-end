@@ -89,6 +89,23 @@ public class driverController {
                 HttpStatus.OK
         );
     }
-
+    //  get driver in randomly
+    @GetMapping(path = "/getDriver")
+    public ResponseEntity<StandardResponse> getRandomVehicle(@RequestAttribute String type){
+        Driver randomlyDriver = driverService.getRandomlyDriver(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"Driver Found",randomlyDriver),
+                HttpStatus.OK
+        );
+    }
+//    get driver count
+    @GetMapping(path = "/count")
+    public ResponseEntity<StandardResponse> getDriverCount(@RequestAttribute String type){
+        int driverCount = driverService.getDriverCount(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"Driver Count",driverCount),
+                HttpStatus.OK
+        );
+    }
 
 }

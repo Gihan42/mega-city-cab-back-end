@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Random;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 
@@ -100,4 +102,27 @@ public class DriverServiceImpl implements DriverService {
         }
         return modelMapper.map(driverRepo.getAllDriver(),new TypeToken<List<DriverDto>>() {}.getType());
     }
+
+    @Override
+    public Driver getRandomlyDriver(String type) {
+        if (!type.equals("User") && !type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        List<Driver> availableDriver = driverRepo.getAvailableDriver();
+        if(availableDriver.isEmpty()){
+            throw new NoSuchElementException("not have available drivers");
+
+        }
+        Random random = new Random();
+        return availableDriver.get(random.nextInt(availableDriver.size()));
+    }
+
+    @Override
+    public int getDriverCount(String type) {
+        if (!type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+        }
+       return driverRepo.getAvailableDriverCount();
+    }
+
 }

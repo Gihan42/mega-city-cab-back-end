@@ -14,5 +14,6 @@ public interface userService {
     User updateUser(userDto dto, String type);
     User deleteUser(Long userId,String type);
     List<userDto> getAllUser(String type);
+    int getUserCount(String type);
 }
 

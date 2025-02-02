@@ -184,4 +184,12 @@ public class userServiceImpl implements userService {
         }
         return modelMapper.map(userRepo.getAllUser(),new TypeToken<List<userDto>>() {}.getType());
     }
+
+    @Override
+    public int getUserCount(String type) {
+        if ( !type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        return userRepo.getTotalUser();
+    }
 }
