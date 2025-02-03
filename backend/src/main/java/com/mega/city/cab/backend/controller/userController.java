@@ -23,6 +23,7 @@ public class userController {
     @Autowired
     userService userService;
 
+//    user or admin login
     @PostMapping(path = "/login")
     public ResponseEntity<LoginResponse> userLogin(@RequestBody AuthenticationRequestDTO dto){
         LoginResponse response = userService.logUser(dto);
@@ -31,6 +32,8 @@ public class userController {
                 HttpStatus.OK
         );
     }
+
+//    user register
     @PostMapping(path = "/register")
     public ResponseEntity<?> saveUser(@RequestBody userDto dto){
         LoginResponse response = userService.saveUser(dto);
@@ -39,6 +42,8 @@ public class userController {
                 HttpStatus.CREATED
         );
     }
+
+//    update user
     @PutMapping(path = "/update")
     public ResponseEntity<StandardResponse> updateUser(@RequestBody userDto dto,
                                                        @RequestAttribute String type){
@@ -49,6 +54,8 @@ public class userController {
         );
     }
 
+
+//    delete user
     @DeleteMapping(params = {"userId"})
     public ResponseEntity<StandardResponse> deleteUser(@RequestParam Long userId,
                                                        @RequestAttribute String type){
@@ -59,6 +66,7 @@ public class userController {
         );
     }
 
+//    get all users
     @GetMapping(path = "/allUsers")
     public ResponseEntity<StandardResponse> getAllUser(@RequestAttribute String type){
         List<userDto> allUser = userService.getAllUser(type);
@@ -69,6 +77,7 @@ public class userController {
 
     }
 
+//    user count
     @GetMapping(path = "/count")
     public  ResponseEntity<StandardResponse> countUser(@RequestAttribute String type){
         int count = userService.getUserCount(type);

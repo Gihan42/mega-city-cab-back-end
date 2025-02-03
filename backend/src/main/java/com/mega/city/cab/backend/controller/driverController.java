@@ -89,7 +89,7 @@ public class driverController {
                 HttpStatus.OK
         );
     }
-    //  get driver in randomly
+//  get driver in randomly
     @GetMapping(path = "/getDriver")
     public ResponseEntity<StandardResponse> getRandomVehicle(@RequestAttribute String type){
         Driver randomlyDriver = driverService.getRandomlyDriver(type);
