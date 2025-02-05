@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.controller;
 
 
 import com.mega.city.cab.backend.dto.AuthenticationRequestDTO;
+import com.mega.city.cab.backend.dto.UserPasswordDto;
 import com.mega.city.cab.backend.dto.userDto;
 import com.mega.city.cab.backend.entity.User;
 import com.mega.city.cab.backend.service.userService;
@@ -85,6 +86,18 @@ public class userController {
                 new StandardResponse(200,"User Count",count),
                 HttpStatus.OK
         );
+    }
+
+//    change password
+    @PutMapping(path = "/updateUserPassword")
+    public ResponseEntity<StandardResponse> updateUserPassword(@RequestBody UserPasswordDto dto,
+                                                               @RequestAttribute String type){
+        String response = userService.updateUserPassword(dto, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"Password Updated",response),
+                HttpStatus.OK
+        );
+
     }
 
 }

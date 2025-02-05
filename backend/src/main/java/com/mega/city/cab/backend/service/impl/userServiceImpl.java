@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.service.impl;
 
 
 import com.mega.city.cab.backend.dto.AuthenticationRequestDTO;
+import com.mega.city.cab.backend.dto.UserPasswordDto;
 import com.mega.city.cab.backend.dto.userDto;
 import com.mega.city.cab.backend.entity.User;
 import com.mega.city.cab.backend.entity.UserRoles;
@@ -191,5 +192,23 @@ public class userServiceImpl implements userService {
             throw new BadCredentialsException("dont have permission");
         }
         return userRepo.getTotalUser();
+    }
+
+    @Override
+    public String updateUserPassword(UserPasswordDto dto, String type) {
+        if (!type.equals("User") && !type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+
+        }
+        User userById = userRepo.getUserById(dto.getUserId());
+        if(!Objects.equals(userById,null)){
+            boolean checkpw = BCrypt.checkpw(dto.getCurrentPassword(), userById.getPassword());
+        if(checkpw){
+            userById.setPassword(BCrypt.hashpw(dto.getNewPassword(), BCrypt.gensalt(10)));
+            return "Password Updated Successfully";
+            }
+            throw new RuntimeException("user current password is wrong!");
+        }
+        throw new RuntimeException("user is not exist");
     }
 }
