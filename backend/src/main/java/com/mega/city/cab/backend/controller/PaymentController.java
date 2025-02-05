@@ -5,13 +5,16 @@ import com.mega.city.cab.backend.dto.DriverDto;
 import com.mega.city.cab.backend.dto.PaymentDto;
 import com.mega.city.cab.backend.entity.Driver;
 import com.mega.city.cab.backend.entity.custom.CustomPaymentDateResult;
+import com.mega.city.cab.backend.entity.custom.CustomPaymentDetails;
 import com.mega.city.cab.backend.entity.custom.CustomPaymentMonthResult;
 import com.mega.city.cab.backend.entity.custom.CustomPaymentResult;
 import com.mega.city.cab.backend.service.PaymentService;
 import com.mega.city.cab.backend.util.response.StandardResponse;
 import com.mega.city.cab.backend.util.response.StripeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,5 +67,20 @@ public class PaymentController {
                 new StandardResponse(200,"monthly payments",paymentByThisMonth),
                 HttpStatus.OK
         );
+    }
+
+//    export report
+    @GetMapping(params = {"paymentId","format"})
+    public ResponseEntity<byte[]> exportReport (@RequestParam long paymentId,
+                                                          @RequestParam String format,
+                                                          @RequestAttribute String type) {
+        byte[] data = paymentService.returnExportReport(paymentId, format, type);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=report.pdf");
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(data);
+
     }
 }

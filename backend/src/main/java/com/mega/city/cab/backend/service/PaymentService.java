@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.service;
 import com.mega.city.cab.backend.dto.PaymentDto;
 import com.mega.city.cab.backend.entity.Payment;
 import com.mega.city.cab.backend.entity.custom.CustomPaymentDateResult;
+import com.mega.city.cab.backend.entity.custom.CustomPaymentDetails;
 import com.mega.city.cab.backend.entity.custom.CustomPaymentMonthResult;
 import com.mega.city.cab.backend.entity.custom.CustomPaymentResult;
 import com.mega.city.cab.backend.util.response.StripeResponse;
@@ -16,5 +17,6 @@ public interface PaymentService {
     List<CustomPaymentResult> getAllPayments(String type);
     List<CustomPaymentDateResult> getPaymentByThisWeekDay(String type);
     List<CustomPaymentMonthResult> getPaymentByThisMonth(String type);
-
+    CustomPaymentDetails getPaymentDetailsByPaymentId(Long paymentId,String type,String reportFormat);
+     byte[] returnExportReport(long paymentId,String reportFormat,String type);
 }

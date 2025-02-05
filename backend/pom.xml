@@ -117,7 +117,6 @@
 		</dependency>
 
 
-
 		<dependency>
 			<groupId>net.coobird</groupId>
 			<artifactId>thumbnailator</artifactId>
@@ -134,7 +133,13 @@
 			<artifactId>stripe-java</artifactId>
 			<version>24.3.0-beta.1</version>
 		</dependency>
-
+		<!--		jasper-->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.20.1</version>
+		</dependency>
+		<!--		jasper-->
 	</dependencies>
 
 	<build>

@@ -1,0 +1,9 @@
+package com.mega.city.cab.backend.service;
+
+import com.mega.city.cab.backend.dto.BookingDto;
+import com.mega.city.cab.backend.entity.Booking;
+
+public interface BookingService {
+    Booking saveBooking(BookingDto booking, String type);
+    Booking updateBookingStatus(long bookingId, String type);
+}
