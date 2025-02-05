@@ -2,6 +2,9 @@ package com.mega.city.cab.backend.service.impl;
 
 import com.mega.city.cab.backend.dto.PaymentDto;
 import com.mega.city.cab.backend.entity.Payment;
+import com.mega.city.cab.backend.entity.custom.CustomPaymentDateResult;
+import com.mega.city.cab.backend.entity.custom.CustomPaymentMonthResult;
+import com.mega.city.cab.backend.entity.custom.CustomPaymentResult;
 import com.mega.city.cab.backend.repo.PaymentRepo;
 import com.mega.city.cab.backend.service.PaymentService;
 import com.mega.city.cab.backend.util.response.StripeResponse;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Transactional
@@ -95,6 +99,30 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment savePayment(PaymentDto paymentDto) {
         Payment map = modelMapper.map(paymentDto, Payment.class);
         return paymentRepo.save(map);
+    }
+
+    @Override
+    public List<CustomPaymentResult> getAllPayments(String type) {
+        if (!type.equals("Admin")) {
+            throw new BadCredentialsException("dont have permission");
+        }
+        return  paymentRepo.getPayments();
+    }
+
+    @Override
+    public List<CustomPaymentDateResult> getPaymentByThisWeekDay(String type) {
+        if (!type.equals("Admin")) {
+            throw new BadCredentialsException("dont have permission");
+        }
+        return paymentRepo.getPaymentByThisWeekDay();
+    }
+
+    @Override
+    public List<CustomPaymentMonthResult> getPaymentByThisMonth(String type) {
+        if (!type.equals("Admin")) {
+            throw new BadCredentialsException("dont have permission");
+        }
+        return paymentRepo.getPaymentByThisMonth();
     }
 
 
