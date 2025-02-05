@@ -100,4 +100,15 @@ public class userController {
 
     }
 
+//    check user contact
+    @GetMapping(params = {"userId"})
+    public ResponseEntity<StandardResponse> updateUserPassword(@RequestParam long userId,
+                                                               @RequestAttribute String type){
+        boolean response = userService.checkUserContact(userId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"response is",response),
+                HttpStatus.OK
+        );
+    }
+
 }

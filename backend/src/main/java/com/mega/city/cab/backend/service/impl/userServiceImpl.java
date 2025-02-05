@@ -164,7 +164,7 @@ public class userServiceImpl implements userService {
     }
 
     @Override
-    public User deleteUser(Long userId ,String type) {
+    public User deleteUser(long userId ,String type) {
         if (!type.equals("User") && !type.equals("Admin")){
             throw new BadCredentialsException("dont have permission");
         }
@@ -210,5 +210,20 @@ public class userServiceImpl implements userService {
             throw new RuntimeException("user current password is wrong!");
         }
         throw new RuntimeException("user is not exist");
+    }
+
+    @Override
+    public boolean checkUserContact(long userId, String type) {
+        if (!type.equals("User") && !type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        User userById = userRepo.getUserById(userId);
+        if(userById.getContactNumber().equals("null")
+                || userById.getContactNumber().equals("")){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }

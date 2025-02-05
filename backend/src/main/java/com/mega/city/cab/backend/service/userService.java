@@ -13,9 +13,10 @@ public interface userService {
     LoginResponse logUser(AuthenticationRequestDTO dto);
     LoginResponse saveUser(userDto dto);
     User updateUser(userDto dto, String type);
-    User deleteUser(Long userId,String type);
+    User deleteUser(long userId,String type);
     List<userDto> getAllUser(String type);
     int getUserCount(String type);
     String updateUserPassword(UserPasswordDto dto, String type);
+    boolean checkUserContact(long userId,String type);
 }
 
