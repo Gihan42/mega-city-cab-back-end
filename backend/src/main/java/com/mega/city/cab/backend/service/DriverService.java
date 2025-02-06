@@ -9,10 +9,12 @@ public interface DriverService {
 
     Driver saveDriver(DriverDto dto, String type);
     Driver updateDriver(DriverDto dto, String type);
-    Driver deleteDriver(Long driverId,String type);
-    Driver getDriverById(Long driverId,String type);
+    Driver deleteDriver(long driverId,String type);
+    Driver getDriverById(long driverId,String type);
     Driver getDriverByEmail(String email,String type);
     List<DriverDto> getAllDriver(String type);
     Driver getRandomlyDriver(String type);
     int getDriverCount(String type);
+    boolean changeStatusInDriver(long driverId);
+    boolean updateStatusInDriver(long driverId);
 }

@@ -13,6 +13,7 @@ public class BookingDto {
     private Long bookingId;
     private Long customerId;
     private Long vehicleId;
+    private Long driverId;
     private String pickUpLocation;
     private String dropLocation;
     private String hours;

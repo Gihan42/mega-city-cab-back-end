@@ -16,7 +16,6 @@ public class Driver {
     @Id
     @Column(name = "driverId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull
     private Long driverId;
     @NonNull
     @Column(name = "name")

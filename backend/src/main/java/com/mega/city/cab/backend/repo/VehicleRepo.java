@@ -13,10 +13,10 @@ import java.util.List;
 @Repository
 public interface VehicleRepo extends JpaRepository<Vehicle,Long> {
 
-    @Query(value = "select * from vehicle where plate_number=:plateNumber and status='Available'",nativeQuery = true)
+    @Query(value = "select * from vehicle where plate_number=:plateNumber",nativeQuery = true)
     Vehicle findByPlateNumber(@Param("plateNumber") String plateNumber);
 
-    @Query(value = "select * from vehicle where vehicle_id=:vehicleId and status='Available'",nativeQuery = true)
+    @Query(value = "select * from vehicle where vehicle_id=:vehicleId",nativeQuery = true)
     Vehicle findByVehicleId(@Param("vehicleId") long vehicleId);
 
     @Query(value = "select  v.vehicle_id as VehicleId, v.plate_number as PlateNumber , v.passenger_count as PassengerCount, v.price_per_km as  PricePerKm, v.vehicle_model as Model,v.status as vehicleStatus, v.image as Image,c.category as Category,c.status as categoryStatus from vehicle v left join category_details cd on v.vehicle_id = cd.vehicle_id left join category c on cd.category_id = c.category_id where v.status='Available' order by  v.vehicle_id desc",nativeQuery = true)

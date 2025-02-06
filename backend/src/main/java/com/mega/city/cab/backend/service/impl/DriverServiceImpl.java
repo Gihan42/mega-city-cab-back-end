@@ -59,7 +59,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Driver deleteDriver(Long driverId, String type) {
+    public Driver deleteDriver(long driverId, String type) {
         if (!type.equals("Admin")){
             throw new BadCredentialsException("dont have permission");
         }
@@ -72,7 +72,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Driver getDriverById(Long driverId,String type) {
+    public Driver getDriverById(long driverId,String type) {
         if (!type.equals("Admin")){
             throw new BadCredentialsException("dont have permission");
         }
@@ -123,6 +123,28 @@ public class DriverServiceImpl implements DriverService {
             throw new BadCredentialsException("dont have permission");
         }
        return driverRepo.getAvailableDriverCount();
+    }
+
+    @Override
+    public boolean changeStatusInDriver(long driverId) {
+        Driver driverById = driverRepo.getDriverById(driverId);
+        if(!Objects.equals(driverById,null) && driverById.getStatus().equals("Available")){
+            driverById.setStatus("Busy");
+            driverRepo.save(driverById);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateStatusInDriver(long driverId) {
+        Driver driverById = driverRepo.getDriverById(driverId);
+        if(!Objects.equals(driverById,null) && driverById.getStatus().equals("Busy")){
+            driverById.setStatus("Available");
+            driverRepo.save(driverById);
+            return true;
+        }
+        return false;
     }
 
 }

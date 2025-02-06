@@ -16,7 +16,6 @@ public class UserRoleDetails {
     @Id
     @Column(name = "userRoleDetailsId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull
     private Long userRoleDetailsId;
     @Column(name = "userRole")
     @NonNull

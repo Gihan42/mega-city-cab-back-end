@@ -13,7 +13,6 @@ public class Booking {
     @Id
     @Column(name = "bookingId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull
     private Long bookingId;
     @NonNull
     @Column(name = "cutomerId")
@@ -21,6 +20,9 @@ public class Booking {
     @NonNull
     @Column(name = "vehicleId")
     private Long vehicleId;
+    @NonNull
+    @Column(name = "driverId")
+    private Long driverId;
     @NonNull
     @Column(name = "pickUpLocation")
     private String pickUpLocation;

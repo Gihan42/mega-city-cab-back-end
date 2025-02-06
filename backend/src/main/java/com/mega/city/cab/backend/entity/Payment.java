@@ -14,7 +14,6 @@ public class Payment {
     @Id
     @Column(name = "paymentId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull
     private Long paymentId;
     @NonNull
     @Column(name = "bookingId")

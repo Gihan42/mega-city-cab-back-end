@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.controller;
 import com.mega.city.cab.backend.dto.BookingDto;
 import com.mega.city.cab.backend.dto.CommentsDto;
 import com.mega.city.cab.backend.entity.Booking;
+import com.mega.city.cab.backend.entity.custom.CustomBookingDetails;
 import com.mega.city.cab.backend.entity.custom.CustomBookingResult;
 import com.mega.city.cab.backend.service.BookingService;
 import com.mega.city.cab.backend.util.response.StandardResponse;
@@ -50,6 +51,16 @@ public class BookingController {
         List<CustomBookingResult> allBookingByCustomer = bookingService.getAllBookingByCustomer(userId, type);
         return new ResponseEntity<>(
                 new StandardResponse(200,"get all bookings",allBookingByCustomer),
+                HttpStatus.OK
+        );
+    }
+
+//    get booking details
+    @GetMapping(path = "/bookingDetails")
+    public ResponseEntity<StandardResponse> getAllBookingDetails( @RequestAttribute String type){
+        List<CustomBookingDetails> bookingDetails = bookingService.getBookingDetails(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"get all bookings details",bookingDetails),
                 HttpStatus.OK
         );
     }

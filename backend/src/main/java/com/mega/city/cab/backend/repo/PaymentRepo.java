@@ -18,7 +18,17 @@ public interface PaymentRepo extends JpaRepository<Payment,Long> {
     @Query(value = "select p.payment_id as paymentId,p.booking_id as bookingId,p.amount as amount,p.date as date,p.payment_method as paymentMethod,p.customer_id as customerId,u.username AS customerName,p.vehicle_id as vehicleId,v.vehicle_model as vehicleModel,d.driver_id as driverId,d.name AS driverName from payment p join user u on p.customer_id = u.user_id join vehicle v on p.vehicle_id = v.vehicle_id join  driver d on v.vehicle_id = d.driver_id order by p.payment_id desc ",nativeQuery = true)
     List<CustomPaymentResult> getPayments();
 
-    @Query(value = "select DATE(date) as paymentDate,SUM(amount) as totalAmount from payment where date >= NOW() - interval 7 day and date < NOW() group  by DATE(date) order by paymentDate",nativeQuery = true)
+    @Query(value = "SELECT\n" +
+            "    DATE(date) AS paymentDate,\n" +
+            "    SUM(amount) AS totalAmount\n" +
+            "FROM\n" +
+            "    payment\n" +
+            "WHERE\n" +
+            "    date >= CURDATE() - INTERVAL 7 DAY\n" +
+            "GROUP BY\n" +
+            "    DATE(date)\n" +
+            "ORDER BY\n" +
+            "    paymentDate DESC;",nativeQuery = true)
     List<CustomPaymentDateResult> getPaymentByThisWeekDay();
 
     @Query(value = "\n" +
@@ -38,7 +48,7 @@ public interface PaymentRepo extends JpaRepository<Payment,Long> {
             "    u.username as userName,\n" +
             "    b.pick_up_location as start_location,\n" +
             "    b.drop_location as drop_location,\n" +
-            "    d.driver_id as driverId,\n" +
+            "    b.driver_id as driverId,\n" +
             "    d.name AS driver_name,\n" +
             "    v.plate_number AS vehicle_plate_number,\n" +
             "    v.vehicle_model AS vehicle_model,\n" +
@@ -51,7 +61,7 @@ public interface PaymentRepo extends JpaRepository<Payment,Long> {
             "         JOIN booking b ON p.booking_id = b.booking_id\n" +
             "         JOIN user u ON b.cutomer_id = u.user_id\n" +
             "         JOIN vehicle v ON b.vehicle_id = v.vehicle_id\n" +
-            "         JOIN driver d ON v.vehicle_id = d.driver_id\n" +
+            "         JOIN driver d ON b.driver_id = d.driver_id\n" +
             "WHERE p.payment_id = :paymentId",nativeQuery = true)
     CustomPaymentDetails getPaymentDetailsByPaymentId(@Param("paymentId") long paymentId);
 

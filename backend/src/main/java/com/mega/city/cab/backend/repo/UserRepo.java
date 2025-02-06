@@ -18,7 +18,7 @@ public interface UserRepo extends JpaRepository<User,Long> {
     @Query(value = "select * from user where user.status='1' order by  user_id desc",nativeQuery = true)
     List<User> getAllUser();
 
-    @Query(value = "select count(*) from user",nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM user u JOIN user_role_details urd ON u.user_id = urd.user_id  JOIN user_roles ur ON urd.user_role = ur.user_roleid  WHERE ur.user_role = 'User'",nativeQuery = true)
     int getTotalUser();
 }
 

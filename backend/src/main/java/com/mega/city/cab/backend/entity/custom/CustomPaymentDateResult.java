@@ -1,6 +1,8 @@
 package com.mega.city.cab.backend.entity.custom;
 
+import java.util.Date;
+
 public interface CustomPaymentDateResult {
-    String getPaymentDate();
+    Date getPaymentDate();
     Long getTotalAmount();
 }

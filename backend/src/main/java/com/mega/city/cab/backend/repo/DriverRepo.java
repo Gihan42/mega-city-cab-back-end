@@ -28,7 +28,7 @@ public interface DriverRepo  extends JpaRepository<Driver,Long>{
     @Query(value = "select * from driver where nic = :nic  and  status='Available' ",nativeQuery = true)
     Driver getDriverByNic(@Param("nic")String nic);
 
-    @Query(value = "select * from driver where status='1' order by driver_id desc",nativeQuery = true)
+    @Query(value = "select * from driver  order by driver_id desc",nativeQuery = true)
     List<Driver> getAllDriver();
 
     @Query(value = "select count(*) from driver",nativeQuery = true)

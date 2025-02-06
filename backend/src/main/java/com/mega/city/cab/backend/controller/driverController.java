@@ -81,7 +81,7 @@ public class driverController {
     }
 
 //    get all drivers
-    @GetMapping(path = "allDrivers")
+    @GetMapping(path = "/allDrivers")
     public ResponseEntity<StandardResponse> getAllDriver(@RequestAttribute String type){
         List<DriverDto> allDriver = driverService.getAllDriver(type);
         return new ResponseEntity<>(

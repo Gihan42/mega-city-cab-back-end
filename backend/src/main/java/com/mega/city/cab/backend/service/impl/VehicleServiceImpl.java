@@ -132,5 +132,27 @@ public class VehicleServiceImpl implements VehicleService {
         return byVehicleModel.get(random.nextInt(byVehicleModel.size()));
     }
 
+    @Override
+    public boolean changeVehicleStatus(long vehicleId) {
+        Vehicle byVehicleId = vehicleRepo.findByVehicleId(vehicleId);
+        if (!Objects.equals(byVehicleId,null) && byVehicleId.getStatus().equals("Available")){
+            byVehicleId.setStatus("Booking");
+            vehicleRepo.save(byVehicleId);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateVehicleStatus(long vehicleId) {
+        Vehicle byVehicleId = vehicleRepo.findByVehicleId(vehicleId);
+        if (!Objects.equals(byVehicleId,null) && byVehicleId.getStatus().equals("Booking")){
+            byVehicleId.setStatus("Available");
+            vehicleRepo.save(byVehicleId);
+            return true;
+        }
+        return false;
+    }
+
 
 }

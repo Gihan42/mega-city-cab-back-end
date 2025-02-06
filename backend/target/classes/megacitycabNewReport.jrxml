@@ -40,7 +40,7 @@
     u.username as userName,
     b.pick_up_location as start_location,
     b.drop_location as drop_location,
-    d.driver_id as driverId,
+    b.driver_id as driverId,
     d.name AS driver_name,
     v.plate_number AS vehicle_plate_number,
     v.vehicle_model AS vehicle_model,
@@ -53,7 +53,7 @@ FROM payment p
          JOIN booking b ON p.booking_id = b.booking_id
          JOIN user u ON b.cutomer_id = u.user_id
          JOIN vehicle v ON b.vehicle_id = v.vehicle_id
-         JOIN driver d ON v.vehicle_id = d.driver_id
+         JOIN driver d ON b.driver_id = d.driver_id
 WHERE p.payment_id =$P{paymentId}]]>
 	</queryString>
 	<field name="paymentId" class="java.lang.Long">
