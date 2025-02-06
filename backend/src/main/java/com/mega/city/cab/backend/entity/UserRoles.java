@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -15,9 +16,12 @@ public class UserRoles {
     @Id
     @Column(name = "userRoleid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private Long userRoleId;
     @Column(name = "userRole")
+    @NonNull
     private String role;
     @Column(name = "status")
+    @NonNull
     private String status;
 }

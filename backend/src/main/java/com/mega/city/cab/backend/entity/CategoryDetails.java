@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 
@@ -15,11 +16,15 @@ public class CategoryDetails {
     @Id
     @Column(name = "categoryDetailsId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private Long categoryDetailsId;
+    @NonNull
     @Column(name = "categoryId")
     private Long categoryId;
+    @NonNull
     @Column(name = "vehicleId")
     private Long vehicleId;
+    @NonNull
     @Column(name = "status")
     private String status;
 

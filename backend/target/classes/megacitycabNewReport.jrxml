@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="megacitycabNewReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5021b7ab-4d36-456c-9e0a-66c9724f9ebb">
+	<property name="template.engine" value="tabular_template"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="687"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="megacitycab"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="PieChartDataset" uuid="33d77d72-cefc-44b5-96f2-92f62ab217b3"/>
+	<subDataset name="tableDataset" uuid="09d05742-d8b5-4474-bfe8-f824858c4551">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<parameter name="paymentId" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT
+    p.payment_id as paymentId,
+    b.booking_id as bookingId,
+    u.user_id as userId,
+    u.username as userName,
+    b.pick_up_location as start_location,
+    b.drop_location as drop_location,
+    d.driver_id as driverId,
+    d.name AS driver_name,
+    v.plate_number AS vehicle_plate_number,
+    v.vehicle_model AS vehicle_model,
+    b.total_km as totalKm,
+    b.hours as hours,
+    p.currency as currency,
+    p.amount as ammount,
+    p.date as paymentDate
+FROM payment p
+         JOIN booking b ON p.booking_id = b.booking_id
+         JOIN user u ON b.cutomer_id = u.user_id
+         JOIN vehicle v ON b.vehicle_id = v.vehicle_id
+         JOIN driver d ON v.vehicle_id = d.driver_id
+WHERE p.payment_id =$P{paymentId}]]>
+	</queryString>
+	<field name="paymentId" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="paymentId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<field name="bookingId" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="bookingId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="userId" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="userId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="user"/>
+	</field>
+	<field name="userName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="userName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="user"/>
+	</field>
+	<field name="start_location" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="start_location"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="drop_location" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="drop_location"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="driverId" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="driverId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="driver"/>
+	</field>
+	<field name="driver_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="driver_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="driver"/>
+	</field>
+	<field name="vehicle_plate_number" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="vehicle_plate_number"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehicle"/>
+	</field>
+	<field name="vehicle_model" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="vehicle_model"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehicle"/>
+	</field>
+	<field name="totalKm" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="totalKm"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="hours" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="hours"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="booking"/>
+	</field>
+	<field name="currency" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="currency"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<field name="ammount" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="ammount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<field name="paymentDate" class="java.time.LocalDateTime">
+		<property name="com.jaspersoft.studio.field.label" value="paymentDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<background>
+		<band height="802" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="140" width="220" height="240" uuid="3cbc6484-fab3-46ec-a0be-f32dbea856e9">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA["Mega_City_Cab_Logo.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="280" y="140" width="150" height="40" uuid="67e33c21-c835-45c0-bd12-fb7a93188573"/>
+				<textElement verticalAlignment="Top">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[contact us :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="210" width="120" height="30" uuid="8884c92c-fd10-478f-aa29-91f4edcbac36"/>
+				<textElement verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[+11023322334 ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="180" width="239" height="30" uuid="e4fc727b-91cd-4716-9afe-7a1282b7b17d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[megacitycab@gmail.com]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="270" width="130" height="30" uuid="d10a3be7-a7fe-431f-9a14-5f3abe8a6a4f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[bookingId]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="430" y="270" width="130" height="30" uuid="0cfda843-b88b-49a8-98f4-2464e3c5819d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[paymentId]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="280" y="300" width="100" height="30" uuid="df7947a8-7b5b-4839-bfeb-18b0d8a39fcf"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bookingId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="430" y="300" width="100" height="30" uuid="dc7a4dab-ef06-4341-9c53-d598f1331043"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paymentId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="360" width="100" height="30" uuid="f6045ee7-1ef3-4fd8-8b9f-abb0c3f15c86"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{userId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="305" y="360" width="100" height="30" uuid="6eb73128-76c9-4600-8137-9257874d825e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{userName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="275" y="330" width="100" height="30" uuid="9a452903-da59-447a-bfa0-f5ce41a796b8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[userId]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="431" y="360" width="45" height="30" uuid="b543ba92-1d3f-47be-858b-75d55c1c0935"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{driverId}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="360" width="80" height="30" uuid="a3bfedbe-fa7e-40a6-8a35-bbaa9d8e2ec1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{driver_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="430" y="330" width="100" height="30" uuid="44975c40-05ca-4104-a45f-393487646755"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Driver]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="410" width="165" height="30" uuid="dc4d3d83-9cae-4d1a-983d-c62b6b6b1984"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Start Location]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="410" width="30" height="30" uuid="d2b260d9-4987-4128-adb2-e4666265845f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="410" width="30" height="30" uuid="82615b84-0f1f-413e-9a2d-c0ff4f8ca92e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="410" width="165" height="30" uuid="525d8b8d-e942-44c8-89ab-7d72e6957477"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Drop Location]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="410" width="100" height="30" uuid="9f351792-76da-47df-be77-091ef162b702"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{start_location}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="445" y="410" width="100" height="30" uuid="d1773562-671b-4897-9a0b-1e8f7e47d059"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{drop_location}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="460" width="75" height="30" uuid="eb53ac27-8a29-4616-b641-693a58c8f49f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vehicle_model}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="120" y="460" width="30" height="30" uuid="42c5c5d1-d5a6-42bf-b5bb-f006bba3c3b5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="460" width="100" height="30" uuid="8f2c9fea-9a10-403e-bc9d-1d9814dd0189"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vehicle]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="460" width="100" height="30" uuid="d4a338d7-6f34-4ccb-8543-ce027f8cb85b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vehicle_plate_number}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="440" y="460" width="30" height="30" uuid="262bfdbd-1a01-4852-b646-c214b0a37ea5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="460" width="100" height="30" uuid="9a756bcb-e5ec-4c28-b5df-1be6822ed43b"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total KM]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="460" y="460" width="100" height="30" uuid="9577fa20-7cfd-4cf2-b04e-ab91ca4d974e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalKm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="340" y="520" width="100" height="30" uuid="71cccd97-9be2-4976-be56-cbe6e67ce5cc"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Currency]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="520" width="30" height="30" uuid="910940a1-5b0f-4fb7-8ee8-3bab6a3232e4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="465" y="520" width="100" height="30" uuid="388fcc8e-f2aa-4414-89d3-7a86c3d447bf"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{currency}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="440" y="520" width="30" height="30" uuid="358fbc1a-5e4c-40ae-abc7-9dc6d055abdc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="115" y="520" width="100" height="30" uuid="fb5934b8-c6b4-44ed-8db1-2ac300972e9c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hours}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="520" width="100" height="30" uuid="ecd2c968-93a7-4d75-ad30-0acfb347a91c"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hours]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="580" width="30" height="30" uuid="1fb59bac-b10a-4bf7-bd52-d2b6913ccf9d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="438" y="580" width="100" height="30" uuid="40ca47d0-6026-477d-861f-a1bb03882f4b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ammount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="580" width="124" height="30" uuid="57fd7c8c-e9be-4765-ae51-be3c40c004b3"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="125" y="580" width="255" height="30" uuid="e779a73c-7d63-4bb1-86f3-0f5f63c092eb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paymentDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="95" y="580" width="30" height="30" uuid="7d352a7c-c933-4769-bf14-ecd6c7269e9a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="580" width="100" height="30" uuid="80b9e2e3-b967-440f-adf9-0a4e32606391"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="22" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="115" y="700" width="310" height="44" uuid="6f0dac3a-ad39-41c2-a583-7a2597f4acad"/>
+				<textElement textAlignment="Center">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[Thank you for choosing us !]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="145" y="728" width="240" height="30" uuid="402b2ed9-5355-45f8-a368-581acc929a13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[good bye]]></text>
+			</staticText>
+			<line>
+				<reportElement x="14" y="680" width="505" height="1" uuid="e045be38-64cf-4e08-8761-dc360ef12f15">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement style="SubTitle" x="180" y="65" width="366" height="29" uuid="649287ac-fc0c-4d2a-b452-b8614b1d7b48"/>
+				<textElement textAlignment="Right">
+					<font size="22" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Get the best cab service in town]]></text>
+			</staticText>
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="0" width="597" height="65" forecolor="#006699" backcolor="#006699" uuid="184ed0d3-9801-4c46-ba21-3cc37a3a18f0"/>
+				<staticText>
+					<reportElement style="Title" x="104" y="0" width="471" height="65" uuid="745f25f7-7025-4153-981e-c7b55b127c2d"/>
+					<textElement textAlignment="Right">
+						<font size="54" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Mega City Cab]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<summary>
+		<band height="55" splitType="Stretch">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<textField pattern="HH:mm">
+				<reportElement x="10" y="9" width="100" height="30" uuid="59a719ca-3f62-44da-9a00-4fa22ad5dbb9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="457" y="9" width="100" height="30" uuid="1129d82a-a818-431b-8268-7c7311e1b7b2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="9" width="556" height="1" uuid="3c08ce46-832b-4445-9c97-51947b5534d7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

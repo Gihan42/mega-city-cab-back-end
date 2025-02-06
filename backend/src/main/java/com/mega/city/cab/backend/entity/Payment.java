@@ -1,9 +1,6 @@
 package com.mega.city.cab.backend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -17,21 +14,30 @@ public class Payment {
     @Id
     @Column(name = "paymentId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private Long paymentId;
+    @NonNull
     @Column(name = "bookingId")
     private Long bookingId;
+    @NonNull
     @Column(name = "amount")
     private double amount;
+    @NonNull
     @Column(name = "date")
     private Date date;
+    @NonNull
     @Column(name = "paymentMethod")
     private String paymentMethod;
+    @NonNull
     @Column(name = "currency")
     private String currency;
+    @NonNull
     @Column(name = "customerId")
     private Long customerId;
+    @NonNull
     @Column(name = "vehicleId")
     private Long vehicleId;
+    @NonNull
     @Column(name = "status")
     private String status;
 }

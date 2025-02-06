@@ -1,9 +1,6 @@
 package com.mega.city.cab.backend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,23 +13,33 @@ public class Booking {
     @Id
     @Column(name = "bookingId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private Long bookingId;
+    @NonNull
     @Column(name = "cutomerId")
     private Long customerId;
+    @NonNull
     @Column(name = "vehicleId")
     private Long vehicleId;
+    @NonNull
     @Column(name = "pickUpLocation")
     private String pickUpLocation;
+    @NonNull
     @Column(name = "dropLocation")
     private String dropLocation;
+    @NonNull
     @Column(name = "hours")
     private String hours;
+    @NonNull
     @Column(name = "totalKm")
     private double totalKm;
+    @NonNull
     @Column(name = "bookingDateTime")
     private Date bookingDateTime;
+    @NonNull
     @Column(name = "amount")
     private double amount;
+    @NonNull
     @Column(name = "status")
     private String status;
 }

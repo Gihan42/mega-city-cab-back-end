@@ -147,9 +147,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public byte[] returnExportReport(long paymentId, String reportFormat,String type) {
+        if (!type.equals("User")) {
+            throw new BadCredentialsException("dont have permission");
+        }
         try {
             // Load the Jasper report file from resources
-            InputStream reportStream = new ClassPathResource("megaCityCabReport.jrxml").getInputStream();
+            InputStream reportStream = new ClassPathResource("megacitycabNewReport.jrxml").getInputStream();
             if (reportStream == null) {
                 throw new FileNotFoundException("Report file not found in the classpath");
             }
