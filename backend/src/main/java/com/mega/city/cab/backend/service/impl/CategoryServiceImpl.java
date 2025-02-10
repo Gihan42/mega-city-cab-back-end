@@ -6,9 +6,11 @@ import com.mega.city.cab.backend.service.CategoryDetailsService;
 import com.mega.city.cab.backend.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -55,5 +57,13 @@ public class CategoryServiceImpl implements CategoryService {
         else {
             categoryDetailsService.updateCategoryDetails(byCategory.getCategoryId(),vehicleId);
         }
+    }
+
+    @Override
+    public List<String> getAllCategory(String type) {
+        if (!type.equals("User")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        return  categoryRepo.getAllCategories();
     }
 }

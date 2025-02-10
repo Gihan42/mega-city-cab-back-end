@@ -18,5 +18,6 @@ public interface userService {
     int getUserCount(String type);
     String updateUserPassword(UserPasswordDto dto, String type);
     boolean checkUserContact(long userId,String type);
+    List<userDto> getAllAdmin(String type);
 }
 

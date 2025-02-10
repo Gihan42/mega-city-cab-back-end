@@ -6,9 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CategoryRepo  extends JpaRepository<Category,Long> {
 
     @Query(value = "select * from category where category=:category",nativeQuery = true)
     Category findByCategory(@Param("category") String category);
+
+    @Query(value = "select distinct  category from category",nativeQuery = true)
+    List<String> getAllCategories();
 }

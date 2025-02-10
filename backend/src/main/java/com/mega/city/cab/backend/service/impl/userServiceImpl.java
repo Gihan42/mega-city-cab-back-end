@@ -148,7 +148,7 @@ public class userServiceImpl implements userService {
 
     @Override
     public User updateUser(userDto dto, String type) {
-        if (!type.equals("User")){
+        if (!type.equals("User") && !type.equals("Admin")){
             throw new BadCredentialsException("dont have permission");
         }
         User userById = userRepo.getUserById(dto.getId());
@@ -183,7 +183,7 @@ public class userServiceImpl implements userService {
         if (!type.equals("User") && !type.equals("Admin")){
             throw new BadCredentialsException("dont have permission");
         }
-        return modelMapper.map(userRepo.getAllUser(),new TypeToken<List<userDto>>() {}.getType());
+        return modelMapper.map(userRepo.getAllUserByUser(),new TypeToken<List<userDto>>() {}.getType());
     }
 
     @Override
@@ -225,5 +225,13 @@ public class userServiceImpl implements userService {
         else {
             return true;
         }
+    }
+
+    @Override
+    public List<userDto> getAllAdmin(String type) {
+        if (!type.equals("Admin")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        return modelMapper.map(userRepo.getAllAdmins(),new TypeToken<List<userDto>>() {}.getType());
     }
 }

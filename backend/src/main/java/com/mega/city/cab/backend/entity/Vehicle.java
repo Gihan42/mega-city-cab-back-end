@@ -34,8 +34,8 @@ public class Vehicle {
     @NonNull
     private String status;
     @Lob
-    @Column(columnDefinition = "MEDIUMBLOB")
-    private String image;
+    @Column(columnDefinition = "LONGTEXT")
+    private String  image;
 
 
 }

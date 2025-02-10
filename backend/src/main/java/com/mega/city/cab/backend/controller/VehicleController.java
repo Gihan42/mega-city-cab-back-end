@@ -1,19 +1,16 @@
 package com.mega.city.cab.backend.controller;
 
 import com.mega.city.cab.backend.dto.VehicleDto;
-import com.mega.city.cab.backend.dto.userDto;
 import com.mega.city.cab.backend.entity.Vehicle;
 import com.mega.city.cab.backend.entity.custom.VehicleCustomResult;
 import com.mega.city.cab.backend.service.VehicleService;
 import com.mega.city.cab.backend.util.response.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -95,14 +92,24 @@ public class VehicleController {
 //    get available vehicle in random
     @GetMapping(params = {"model"})
     public ResponseEntity<StandardResponse> getRandomVehicle(@RequestParam String model,@RequestAttribute String type){
+        System.out.println("awa"+model);
         Vehicle vehicle = vehicleService.randomlyGetVehicle(model, type);
+        System.out.println(vehicle);
         return new ResponseEntity<>(
                 new StandardResponse(200,"Vehicle Found",vehicle),
                 HttpStatus.OK
         );
     }
 
-
+//     get all vehicle model
+    @GetMapping(path = "/model")
+    public ResponseEntity<StandardResponse> getAllVehicleModel(@RequestAttribute String type) {
+        List<String> allVehicleModel = vehicleService.getAllVehicleModel(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "get all vehicle models", allVehicleModel),
+                HttpStatus.OK
+        );
+    }
 
 
 }

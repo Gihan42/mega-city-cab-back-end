@@ -78,6 +78,19 @@ public class userController {
 
     }
 
+//    get all admins
+    @GetMapping(path = "/allAdmins")
+    public ResponseEntity<StandardResponse> getAllAdmin(@RequestAttribute String type){
+        List<userDto> allAdmin = userService.getAllAdmin(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"all admins",allAdmin),
+                HttpStatus.OK
+        );
+    }
+
+
+
+
 //    user count
     @GetMapping(path = "/count")
     public  ResponseEntity<StandardResponse> countUser(@RequestAttribute String type){

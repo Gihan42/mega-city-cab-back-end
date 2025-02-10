@@ -19,4 +19,5 @@ public interface VehicleService {
     Vehicle randomlyGetVehicle(String ModelName,String type);
     boolean changeVehicleStatus(long vehicleId);
     boolean updateVehicleStatus(long vehicleId);
+    List<String> getAllVehicleModel(String type);
 }

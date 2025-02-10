@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,26 +37,42 @@ public class VehicleServiceImpl implements VehicleService {
 
 
     @Override
-    public Vehicle saveVehicle(VehicleDto vehicleDto, MultipartFile file,String type) {
+    public Vehicle saveVehicle(VehicleDto vehicleDto, MultipartFile file, String type) {
 
-        if (!type.equals("Admin")){
-            throw new BadCredentialsException("dont have permission");
+        if (!type.equals("Admin")) {
+            throw new BadCredentialsException("Don't have permission");
         }
 
+        // Check if the vehicle with the given plate number already exists
         Vehicle byPlateNumber = vehicleRepo.findByPlateNumber(vehicleDto.getPlateNumber());
-        if (Objects.equals(byPlateNumber,null)){
-            try{
-                vehicleDto.setImage(Base64.getEncoder().encodeToString(file.getBytes()));
-                Vehicle map = modelMapper.map(vehicleDto, Vehicle.class);
-                Vehicle save = vehicleRepo.save(map);
-                categoryService.saveCategory(vehicleDto.getCategory(), save.getVehicleId());
-                return save;
-            }catch (IOException e){
-                throw new RuntimeException(e);
+        if (Objects.isNull(byPlateNumber)) {
+            try {
+                // Map DTO to Entity
+                Vehicle vehicle = modelMapper.map(vehicleDto, Vehicle.class);
+
+                // Convert image to Base64 string
+                String base64Image = Base64.getEncoder().encodeToString(file.getBytes());
+
+                // Set the Base64 image to the vehicle entity
+                vehicle.setImage(base64Image);
+
+                // Save vehicle
+                Vehicle savedVehicle = vehicleRepo.save(vehicle);
+
+                // Save category
+                categoryService.saveCategory(vehicleDto.getCategory(), savedVehicle.getVehicleId());
+
+                return savedVehicle;
+
+            } catch (IOException e) {
+                throw new RuntimeException("Error processing the image", e);
             }
         }
-       throw new RuntimeException("Vehicle already exists");
+
+        // Throw exception if vehicle already exists
+        throw new RuntimeException("Vehicle already exists");
     }
+
 
     @Override
     public Vehicle updateVehicle(VehicleDto vehicleDto, MultipartFile file, String type) {
@@ -79,12 +96,12 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public List<VehicleCustomResult> getAllVehiclesWithCategory(String type) {
-        if (!type.equals("Admin")){
-            throw new BadCredentialsException("dont have permission");
+        if (!type.equals("Admin")) {
+            throw new BadCredentialsException("Don't have permission");
         }
         return vehicleRepo.getAllVehiclesWithCategory();
-    }
 
+    }
 
     @Override
     public Vehicle deleteVehicle(long vehicleId, String type) {
@@ -152,6 +169,14 @@ public class VehicleServiceImpl implements VehicleService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<String> getAllVehicleModel(String type) {
+        if (!type.equals("User")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        return vehicleRepo.getAllVehicleModel();
     }
 
 
