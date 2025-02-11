@@ -88,9 +88,6 @@ public class userController {
         );
     }
 
-
-
-
 //    user count
     @GetMapping(path = "/count")
     public  ResponseEntity<StandardResponse> countUser(@RequestAttribute String type){
@@ -115,7 +112,7 @@ public class userController {
 
 //    check user contact
     @GetMapping(params = {"userId"})
-    public ResponseEntity<StandardResponse> updateUserPassword(@RequestParam long userId,
+    public ResponseEntity<StandardResponse> checkUserContact(@RequestParam long userId,
                                                                @RequestAttribute String type){
         boolean response = userService.checkUserContact(userId, type);
         return new ResponseEntity<>(
@@ -124,4 +121,13 @@ public class userController {
         );
     }
 
+    @GetMapping(params = {"uId"})
+    ResponseEntity<StandardResponse> getUserById(@RequestParam long uId,
+                                                  @RequestAttribute String type){
+        User userByUserId = userService.getUserByUserId(uId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"get user",userByUserId),
+                HttpStatus.OK
+        );
+    }
 }

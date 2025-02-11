@@ -140,6 +140,13 @@
 			<version>6.20.1</version>
 		</dependency>
 		<!--		jasper-->
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

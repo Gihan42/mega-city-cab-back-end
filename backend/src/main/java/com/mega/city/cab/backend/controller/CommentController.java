@@ -4,6 +4,7 @@ import com.mega.city.cab.backend.dto.CommentsDto;
 import com.mega.city.cab.backend.dto.DriverDto;
 import com.mega.city.cab.backend.entity.Comments;
 import com.mega.city.cab.backend.entity.custom.CommentCustomResult;
+import com.mega.city.cab.backend.entity.custom.CustomComment;
 import com.mega.city.cab.backend.service.CommentService;
 import com.mega.city.cab.backend.util.response.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,4 +64,14 @@ public class CommentController {
                 HttpStatus.OK
         );
     }
+
+//    get randomly four comments
+@GetMapping(path = "/randomComment")
+public ResponseEntity<StandardResponse> getRandomComment(@RequestAttribute String type) {
+    List<CustomComment> randomComments = commentService.getRandomComments(type);
+    return new ResponseEntity<>(
+            new StandardResponse(200, "Random comments", randomComments),
+            HttpStatus.OK
+    );
+}
 }

@@ -234,4 +234,16 @@ public class userServiceImpl implements userService {
         }
         return modelMapper.map(userRepo.getAllAdmins(),new TypeToken<List<userDto>>() {}.getType());
     }
+
+    @Override
+    public User getUserByUserId(long userId, String type) {
+        if (!type.equals("User")){
+            throw new BadCredentialsException("dont have permission");
+        }
+        User userById = userRepo.getUserById(userId);
+        if (!Objects.equals(userById,null)){
+            return userById;
+        }
+        throw new RuntimeException("user not exit");
+    }
 }

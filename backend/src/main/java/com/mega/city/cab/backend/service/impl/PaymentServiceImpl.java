@@ -80,8 +80,8 @@ public class PaymentServiceImpl implements PaymentService {
             SessionCreateParams params =
                     SessionCreateParams.builder()
                             .setMode(SessionCreateParams.Mode.PAYMENT)
-                            .setSuccessUrl("http://localhost:8080/success")
-                            .setCancelUrl("http://localhost:8080/cancel")
+                            .setSuccessUrl("http://localhost:3000/success")
+                            .setCancelUrl("http://localhost:3000/cancel")
                             .addAllLineItem(Collections.singletonList(lineItem))
                             .build();
 
@@ -185,6 +185,13 @@ public class PaymentServiceImpl implements PaymentService {
         return new byte[0];
     }
 
+    @Override
+    public String getPaymentStatusById(long paymentId, String type) {
+        if (!type.equals("User")) {
+            throw new BadCredentialsException("dont have permission");
+        }
+        return  paymentRepo.getPaymentStatusById(paymentId);
+    }
 
 
 }

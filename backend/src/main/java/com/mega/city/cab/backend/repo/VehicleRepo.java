@@ -22,7 +22,17 @@ public interface VehicleRepo extends JpaRepository<Vehicle,Long> {
     @Query(value = "select  v.vehicle_id as VehicleId, v.plate_number as PlateNumber , v.passenger_count as PassengerCount, v.price_per_km as  PricePerKm, v.vehicle_model as Model,v.status as vehicleStatus, v.image as Image,c.category as Category,c.status as categoryStatus from vehicle v left join category_details cd on v.vehicle_id = cd.vehicle_id left join category c on cd.category_id = c.category_id where v.status='Available' order by  v.vehicle_id desc",nativeQuery = true)
     List<VehicleCustomResult> getAllVehiclesWithCategory();
 
-    @Query(value = "select  distinct v.vehicle_model from vehicle v join category_details cd on v.vehicle_id = cd.vehicle_id join category c on cd.category_id = c.category_id  where c.category = :categoryName and c.status ='1'",nativeQuery = true)
+    @Query(value = "SELECT DISTINCT v.vehicle_model\n" +
+            "FROM vehicle v\n" +
+            "         JOIN category_details cd ON v.vehicle_id = cd.vehicle_id\n" +
+            "         JOIN category c ON cd.category_id = c.category_id\n" +
+            "WHERE c.category = :categoryName\n" +
+            "  AND EXISTS (\n" +
+            "    SELECT 1\n" +
+            "    FROM vehicle v2\n" +
+            "    WHERE v2.vehicle_model = v.vehicle_model\n" +
+            "      AND v2.status = 'Available'\n" +
+            ");",nativeQuery = true)
     List<String> getVehicleModelByCategoryName(@Param("categoryName") String categoryName);
 
     @Query(value = "select count(*) from vehicle",nativeQuery = true)

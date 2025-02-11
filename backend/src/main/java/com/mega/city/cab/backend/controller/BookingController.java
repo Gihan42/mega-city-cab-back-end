@@ -27,6 +27,7 @@ public class BookingController {
     public ResponseEntity<StandardResponse> saveBooking(@RequestBody BookingDto dto,
                                                         @RequestAttribute String type){
         Booking booking = bookingService.saveBooking(dto, type);
+        System.out.println(booking);
         return new ResponseEntity<>(
                 new StandardResponse(200,"Booking saved",booking),
                 HttpStatus.OK

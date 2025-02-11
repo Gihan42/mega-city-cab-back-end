@@ -18,5 +18,6 @@ public interface PaymentService {
     List<CustomPaymentDateResult> getPaymentByThisWeekDay(String type);
     List<CustomPaymentMonthResult> getPaymentByThisMonth(String type);
     CustomPaymentDetails getPaymentDetailsByPaymentId(Long paymentId,String type,String reportFormat);
-     byte[] returnExportReport(long paymentId,String reportFormat,String type);
+    byte[] returnExportReport(long paymentId,String reportFormat,String type);
+    String getPaymentStatusById(long paymentId,String type);
 }

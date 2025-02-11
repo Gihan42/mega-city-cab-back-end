@@ -11,6 +11,11 @@ import com.mega.city.cab.backend.entity.custom.CustomPaymentResult;
 import com.mega.city.cab.backend.service.PaymentService;
 import com.mega.city.cab.backend.util.response.StandardResponse;
 import com.mega.city.cab.backend.util.response.StripeResponse;
+import com.stripe.Stripe;
+import com.stripe.model.billingportal.Session;
+import com.stripe.net.Webhook;
+import com.stripe.param.checkout.SessionCreateParams;
+import jdk.jfr.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -83,4 +88,19 @@ public class PaymentController {
                 .body(data);
 
     }
+
+//get payment status by paymentId
+        @GetMapping(params = {"pId"})
+        public ResponseEntity<StandardResponse> getPaymentStatusById(@RequestParam long pId,
+                                                                     @RequestAttribute String type){
+            System.out.println("awa");
+            String paymentStatusById = paymentService.getPaymentStatusById(pId, type);
+            return new ResponseEntity<>(
+                    new StandardResponse(200,"payment status",paymentStatusById),
+                    HttpStatus.OK
+            );
+
+        }
+
+
 }

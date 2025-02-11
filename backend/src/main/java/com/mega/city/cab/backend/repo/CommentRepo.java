@@ -2,6 +2,7 @@ package com.mega.city.cab.backend.repo;
 
 import com.mega.city.cab.backend.entity.Comments;
 import com.mega.city.cab.backend.entity.custom.CommentCustomResult;
+import com.mega.city.cab.backend.entity.custom.CustomComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,8 @@ public interface CommentRepo extends JpaRepository<Comments,Long> {
 
     @Query(value = "select  c.comment_id as commentId,c.user_id as userId, u.username as username, c.comment as comment,c.date as date,c.status as status from comments c join user u ON c.user_id = u.user_id order by  comment_id desc",nativeQuery = true)
     List<CommentCustomResult> getAllComments();
+
+    @Query(value = "SELECT c.comment AS comment, u.username AS customerName FROM comments c INNER JOIN user u ON c.user_id = u.user_id ORDER BY RAND() LIMIT 4", nativeQuery = true)
+    List<CustomComment> getRandomComments();
+
 }

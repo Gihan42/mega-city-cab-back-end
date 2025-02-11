@@ -92,9 +92,7 @@ public class VehicleController {
 //    get available vehicle in random
     @GetMapping(params = {"model"})
     public ResponseEntity<StandardResponse> getRandomVehicle(@RequestParam String model,@RequestAttribute String type){
-        System.out.println("awa"+model);
         Vehicle vehicle = vehicleService.randomlyGetVehicle(model, type);
-        System.out.println(vehicle);
         return new ResponseEntity<>(
                 new StandardResponse(200,"Vehicle Found",vehicle),
                 HttpStatus.OK
