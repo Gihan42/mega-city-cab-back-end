@@ -81,4 +81,12 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookingRepo.getBookingDetails();
     }
+
+    @Override
+    public int getPendingCount(String type) {
+        if (!type.equals("Admin")){
+            throw new RuntimeException("dont have permission");
+        }
+        return bookingRepo.getPendingCount();
+    }
 }

@@ -66,4 +66,16 @@ public class BookingController {
         );
     }
 
+//    get Pending booking count
+    @GetMapping(path = "/pending/count")
+    public ResponseEntity<StandardResponse>getPendingCount(@RequestAttribute String type){
+        int pendingCount = bookingService.getPendingCount(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"get all  pending bookings count",pendingCount),
+                HttpStatus.OK
+        );
+
+    }
+
+
 }

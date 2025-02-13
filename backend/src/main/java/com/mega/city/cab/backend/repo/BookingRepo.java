@@ -50,4 +50,8 @@ public interface BookingRepo extends JpaRepository<Booking,Long> {
             "         join vehicle v on b.vehicle_id = v.vehicle_id\n" +
             "         join driver d on b.driver_id = d.driver_id order by b.booking_date_time desc",nativeQuery = true)
     List<CustomBookingDetails> getBookingDetails();
+
+    @Query(value = "select count(*) from booking where status='Pending'",nativeQuery = true)
+    int getPendingCount();
+
 }

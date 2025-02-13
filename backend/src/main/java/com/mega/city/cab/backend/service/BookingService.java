@@ -12,4 +12,5 @@ public interface BookingService {
     Booking updateBookingStatus(long bookingId, String type);
     List<CustomBookingResult> getAllBookingByCustomer(long userId,String type);
     List<CustomBookingDetails> getBookingDetails(String type);
+    int getPendingCount(String type);
 }
