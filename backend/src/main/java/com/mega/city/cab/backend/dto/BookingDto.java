@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
@@ -18,6 +19,7 @@ public class BookingDto {
     private String dropLocation;
     private String hours;
     private double totalKm;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS", timezone = "UTC")
     private Date bookingDateTime;
     private double amount;
     private String status;

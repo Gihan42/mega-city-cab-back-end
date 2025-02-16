@@ -16,22 +16,27 @@ import java.util.List;
 public interface PaymentRepo extends JpaRepository<Payment,Long> {
 
     @Query(value = "SELECT\n" +
-            "    p.payment_id AS paymentId,\n" +
-            "    p.booking_id AS bookingId,\n" +
-            "    p.amount AS amount,\n" +
-            "    p.date AS date,\n" +
-            "    p.payment_method AS paymentMethod,\n" +
-            "    p.customer_id AS customerId,\n" +
+            "    p.payment_id as paymentId,\n" +
+            "    p.booking_id as bookingId,\n" +
+            "    p.amount as amount,\n" +
+            "    p.date as date,\n" +
+            "    p.payment_method as paymentMethod,\n" +
+            "    p.customer_id customerId,\n" +
             "    u.username AS customerName,\n" +
-            "    p.vehicle_id AS vehicleId,\n" +
-            "    v.vehicle_model AS vehicleModel,\n" +
-            "    d.driver_id AS driverId,\n" +
+            "    p.vehicle_id as vehicleId,\n" +
+            "    v.vehicle_model as vehicleModel,\n" +
+            "    b.driver_id as driverId,\n" +
             "    d.name AS driverName\n" +
-            "FROM payment p\n" +
-            "         JOIN user u ON p.customer_id = u.user_id\n" +
-            "         JOIN vehicle v ON p.vehicle_id = v.vehicle_id\n" +
-            "         JOIN driver d ON v.vehicle_id = d.driver_id\n" +
-            "ORDER BY p.payment_id DESC\n",nativeQuery = true)
+            "FROM\n" +
+            "    payment p\n" +
+            "        JOIN\n" +
+            "    user u ON p.customer_id = u.user_id\n" +
+            "        JOIN\n" +
+            "    vehicle v ON p.vehicle_id = v.vehicle_id\n" +
+            "        JOIN\n" +
+            "    booking b ON p.booking_id = b.booking_id\n" +
+            "        JOIN\n" +
+            "    driver d ON b.driver_id = d.driver_id  order by p.booking_id desc",nativeQuery = true)
     List<CustomPaymentResult> getPayments();
 
     @Query(value = "SELECT\n" +

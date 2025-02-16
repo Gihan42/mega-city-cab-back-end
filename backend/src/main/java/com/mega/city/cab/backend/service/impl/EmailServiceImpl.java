@@ -20,7 +20,7 @@ public class EmailServiceImpl implements EmailService {
             throw new BadCredentialsException("dont have permission");
         }
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("apismtp@mailtrap.io"); // Username එකට හරිල update කරන්න
+        message.setFrom("apismtp@mailtrap.io");
         message.setTo(dto.getDriverEmail());
         message.setSubject("New Booking Confirmation");
         message.setText(

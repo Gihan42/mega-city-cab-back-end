@@ -26,6 +26,7 @@ public class BookingController {
     @PostMapping(path = "/save")
     public ResponseEntity<StandardResponse> saveBooking(@RequestBody BookingDto dto,
                                                         @RequestAttribute String type){
+        System.out.println("awa"+dto);
         Booking booking = bookingService.saveBooking(dto, type);
         System.out.println(booking);
         return new ResponseEntity<>(

@@ -18,7 +18,7 @@ import java.util.Objects;
 public class userRoleDetailsServiceImpl implements userRoleDetailsService {
 
     @Autowired
-    userRoleDetailsRepo userRoleDetailsRepo;
+    public userRoleDetailsRepo userRoleDetailsRepo;
 
     @Autowired
     UserRepo userRepo;

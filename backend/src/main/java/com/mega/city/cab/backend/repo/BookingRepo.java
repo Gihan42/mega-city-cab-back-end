@@ -54,4 +54,10 @@ public interface BookingRepo extends JpaRepository<Booking,Long> {
     @Query(value = "select count(*) from booking where status='Pending'",nativeQuery = true)
     int getPendingCount();
 
+    @Query(value = "select * from booking where  status ='Pending'",nativeQuery = true)
+    List<Booking> findPendingBookings();
+
+    @Query(value = "select * from booking where  status ='Booking'",nativeQuery = true)
+    List<Booking> findByStatus();
+
 }

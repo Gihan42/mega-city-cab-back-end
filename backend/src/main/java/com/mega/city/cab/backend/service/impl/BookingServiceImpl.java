@@ -10,9 +10,12 @@ import com.mega.city.cab.backend.service.DriverService;
 import com.mega.city.cab.backend.service.VehicleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,19 +35,44 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     DriverService driverService;
 
+    @Scheduled(cron = "0 * * * * ?")
+    public void checkAndUpdateBookingStatus() {
+        Date now = new Date();
+//        System.out.println("Checking bookings at: " + now);
+        List<Booking> pendingBookings = bookingRepo.findByStatus();
+        for (Booking booking : pendingBookings) {
+//            System.out.println("Processing booking: " + booking.getBookingId());
+            if (booking.getBookingDateTime().before(now)) {
+              //  System.out.println("Booking date is before now: " + booking.getBookingDateTime());
+                Booking bookingById = bookingRepo.getBookingById(booking.getBookingId());
+                if (bookingById.getStatus().equals("Booking")) {
+                    bookingById.setStatus("Pending");
+                    vehicleService.changeVehicleStatus(booking.getVehicleId());
+                    driverService.changeStatusInDriver(booking.getDriverId());
+                    bookingRepo.save(bookingById);
+                  //  System.out.println("Booking status updated to Pending: " + bookingById.getBookingId());
+                } else {
+                   // System.out.println("Booking status is not Booking: " + bookingById.getStatus());
+                    throw new RuntimeException("booking status not pending");
+                }
+            }
+        }
+    }
+
     @Override
     public Booking saveBooking(BookingDto booking, String type) {
         if (!type.equals("User")){
             throw new RuntimeException("dont have permission");
         }
-        boolean changedVehicleStatus = vehicleService.changeVehicleStatus(booking.getVehicleId());
-        boolean changedDriverStatus = driverService.changeStatusInDriver(booking.getDriverId());
-        if(changedVehicleStatus && changedDriverStatus){
+//        boolean changedVehicleStatus = vehicleService.changeVehicleStatus(booking.getVehicleId());
+//        boolean changedDriverStatus = driverService.changeStatusInDriver(booking.getDriverId());
+//        if(changedVehicleStatus && changedDriverStatus){
             Booking map = modelMapper.map(booking, Booking.class);
-            map.setStatus("Pending");
+            map.setStatus("Booking");
+            System.out.println("map-"+map);
             return  bookingRepo.save(map);
-        }
-        throw new RuntimeException("vehicle or driver not changed");
+       // }
+        //throw new RuntimeException("vehicle or driver not changed");
 
     }
 

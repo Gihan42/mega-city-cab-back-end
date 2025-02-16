@@ -35,7 +35,6 @@ public class VehicleServiceImpl implements VehicleService {
     CategoryDetailsService categoryDetailsService;
 
 
-
     @Override
     public Vehicle saveVehicle(VehicleDto vehicleDto, MultipartFile file, String type) {
 
