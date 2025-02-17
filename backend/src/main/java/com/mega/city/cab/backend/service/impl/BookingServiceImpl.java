@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -59,21 +60,62 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+
+
+/*
     @Override
     public Booking saveBooking(BookingDto booking, String type) {
         if (!type.equals("User")){
             throw new RuntimeException("dont have permission");
         }
-//        boolean changedVehicleStatus = vehicleService.changeVehicleStatus(booking.getVehicleId());
-//        boolean changedDriverStatus = driverService.changeStatusInDriver(booking.getDriverId());
-//        if(changedVehicleStatus && changedDriverStatus){
-            Booking map = modelMapper.map(booking, Booking.class);
-            map.setStatus("Booking");
-            System.out.println("map-"+map);
-            return  bookingRepo.save(map);
-       // }
-        //throw new RuntimeException("vehicle or driver not changed");
+        List<Date> allBookingDatesByVehicleId =
+                bookingRepo.getAllBookingDatesByVehicleId(booking.getVehicleId());
+        for (Date date : allBookingDatesByVehicleId) {
+            if (booking.getBookingDateTime().equals(date)) {
+                throw new RuntimeException("cannot booking this day");
+            }
+        }
+        Booking map = modelMapper.map(booking, Booking.class);
+        map.setStatus("Booking");
+        System.out.println("map-"+map);
+        return  bookingRepo.save(map);
+    }
+*/
 
+    @Override
+    public Booking saveBooking(BookingDto booking, String type) {
+        if (!type.equals("User")) {
+            throw new RuntimeException("dont have permission");
+        }
+
+        List<Date> allBookingDatesByVehicleId =
+                bookingRepo.getAllBookingDatesByVehicleId(booking.getVehicleId());
+        Date bookingDate = booking.getBookingDateTime();
+        double hoursToAdd = Double.parseDouble(booking.getHours());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(bookingDate);
+
+
+        int hours = (int) hoursToAdd;
+        int minutes = (int) ((hoursToAdd - hours) * 60);
+
+
+        calendar.add(Calendar.HOUR, hours);
+        calendar.add(Calendar.MINUTE, minutes);
+        Date updateBookingdDate = calendar.getTime();
+//        System.out.println("Updated Booking Date: " + updateBookingdDate);
+        for (Date existingDate : allBookingDatesByVehicleId) {
+
+            if (bookingDate.equals(existingDate) || updateBookingdDate.equals(existingDate)) {
+                throw new RuntimeException("Cannot book on this day. Date already booked.");
+            }
+            if (updateBookingdDate.after(existingDate)) {
+                throw new RuntimeException("Cannot book. Overlapping with existing booking.");
+            }
+        }
+        Booking map = modelMapper.map(booking, Booking.class);
+        map.setStatus("Booking");
+        return bookingRepo.save(map);
     }
 
     @Override
@@ -116,5 +158,13 @@ public class BookingServiceImpl implements BookingService {
             throw new RuntimeException("dont have permission");
         }
         return bookingRepo.getPendingCount();
+    }
+
+    @Override
+    public List<Date> getAllBookingDateByVehicleId(long vehicleId,String type) {
+        if (!type.equals("User")){
+            throw new RuntimeException("dont have permission");
+        }
+        return  bookingRepo.getAllBookingDatesByVehicleId(vehicleId);
     }
 }

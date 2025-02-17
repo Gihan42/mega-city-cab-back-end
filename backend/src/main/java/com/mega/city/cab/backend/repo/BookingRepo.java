@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -59,5 +60,8 @@ public interface BookingRepo extends JpaRepository<Booking,Long> {
 
     @Query(value = "select * from booking where  status ='Booking'",nativeQuery = true)
     List<Booking> findByStatus();
+
+    @Query(value = "select booking_date_time from booking where vehicle_id=:vehicleId and status='Booking'",nativeQuery = true)
+    List<Date> getAllBookingDatesByVehicleId(@Param("vehicleId")long vehicleId);
 
 }

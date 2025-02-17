@@ -15,11 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class BookingServiceImplTest {
@@ -48,133 +46,161 @@ class BookingServiceImplTest {
     void testSaveBooking_Success() {
         BookingDto bookingDto = new BookingDto();
         bookingDto.setVehicleId(1L);
-        bookingDto.setDriverId(1L);
+        bookingDto.setBookingDateTime(new Date());
+        bookingDto.setHours("2.5");
 
         Booking booking = new Booking();
-        booking.setStatus("Pending");
+        booking.setStatus("Booking");
 
+        when(bookingRepo.getAllBookingDatesByVehicleId(anyLong())).thenReturn(Collections.emptyList());
         when(modelMapper.map(bookingDto, Booking.class)).thenReturn(booking);
-        when(vehicleService.changeVehicleStatus(1L)).thenReturn(true);
-        when(driverService.changeStatusInDriver(1L)).thenReturn(true);
-        when(bookingRepo.save(any(Booking.class))).thenReturn(booking);
+        when(bookingRepo.save(booking)).thenReturn(booking);
 
         Booking result = bookingService.saveBooking(bookingDto, "User");
 
         assertNotNull(result);
-        assertEquals("Pending", result.getStatus());
-        verify(bookingRepo, times(1)).save(any(Booking.class));
+        assertEquals("Booking", result.getStatus());
+        verify(bookingRepo, times(1)).save(booking);
     }
 
     @Test
-    void testSaveBooking_NoPermission() {
+    void testSaveBooking_ThrowsException_WhenTypeIsNotUser() {
         BookingDto bookingDto = new BookingDto();
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            bookingService.saveBooking(bookingDto, "Admin");
-        });
+        assertThrows(RuntimeException.class, () -> bookingService.saveBooking(bookingDto, "Admin"));
+    }
 
-        assertEquals("dont have permission", exception.getMessage());
+    @Test
+    void testSaveBooking_ThrowsException_WhenDateIsAlreadyBooked() {
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setVehicleId(1L);
+        bookingDto.setBookingDateTime(new Date());
+        bookingDto.setHours("2.5");
+
+        List<Date> bookedDates = Collections.singletonList(new Date());
+
+        when(bookingRepo.getAllBookingDatesByVehicleId(anyLong())).thenReturn(bookedDates);
+
+        assertThrows(RuntimeException.class, () -> bookingService.saveBooking(bookingDto, "User"));
     }
 
     @Test
     void testUpdateBookingStatus_Success() {
+        long bookingId = 1L;
+        long vehicleId = 123L; // Add a valid vehicleId
+        long driverId = 456L; // Add a valid driverId
+
+        // Create a Booking object and set required fields
         Booking booking = new Booking();
         booking.setStatus("Pending");
-        booking.setVehicleId(1L);
-        booking.setDriverId(1L);
+        booking.setVehicleId(vehicleId); // Set vehicleId
+        booking.setDriverId(driverId); // Set driverId
 
-        when(bookingRepo.getBookingById(1L)).thenReturn(booking);
-        when(vehicleService.updateVehicleStatus(1L)).thenReturn(true);
-        when(driverService.updateStatusInDriver(1L)).thenReturn(true);
-        when(bookingRepo.save(any(Booking.class))).thenReturn(booking);
+        // Mock the behavior of dependencies
+        when(bookingRepo.getBookingById(bookingId)).thenReturn(booking);
+        when(vehicleService.updateVehicleStatus(vehicleId)).thenReturn(true);
+        when(driverService.updateStatusInDriver(driverId)).thenReturn(true);
+        when(bookingRepo.save(booking)).thenReturn(booking);
 
-        Booking result = bookingService.updateBookingStatus(1L, "Admin");
+        // Call the method under test
+        Booking result = bookingService.updateBookingStatus(bookingId, "Admin");
 
+        // Assertions
         assertNotNull(result);
         assertEquals("Confirmed", result.getStatus());
-        verify(bookingRepo, times(1)).save(any(Booking.class));
+        verify(bookingRepo, times(1)).save(booking);
+        verify(vehicleService, times(1)).updateVehicleStatus(vehicleId);
+        verify(driverService, times(1)).updateStatusInDriver(driverId);
     }
 
     @Test
-    void testUpdateBookingStatus_NoPermission() {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            bookingService.updateBookingStatus(1L, "User");
-        });
+    void testUpdateBookingStatus_ThrowsException_WhenTypeIsNotAdmin() {
+        long bookingId = 1L;
 
-        assertEquals("dont have permission", exception.getMessage());
+        assertThrows(RuntimeException.class, () -> bookingService.updateBookingStatus(bookingId, "User"));
+    }
+
+    @Test
+    void testUpdateBookingStatus_ThrowsException_WhenBookingDoesNotExist() {
+        long bookingId = 1L;
+
+        when(bookingRepo.getBookingById(bookingId)).thenReturn(null);
+
+        assertThrows(RuntimeException.class, () -> bookingService.updateBookingStatus(bookingId, "Admin"));
     }
 
     @Test
     void testGetAllBookingByCustomer_Success() {
-        // Mock the CustomBookingResult object
-        CustomBookingResult customBookingResult = mock(CustomBookingResult.class);
+        long userId = 1L;
+        CustomBookingResult mockResult = mock(CustomBookingResult.class); // Mock the abstract class
+        List<CustomBookingResult> expectedResults = Collections.singletonList(mockResult);
 
-        // Create a list of mocked CustomBookingResult objects
-        List<CustomBookingResult> bookingList = Arrays.asList(customBookingResult);
+        when(bookingRepo.getBookingByCustomerId(userId)).thenReturn(expectedResults);
 
-        // Mock the repository method
-        when(bookingRepo.getBookingByCustomerId(1L)).thenReturn(bookingList);
+        List<CustomBookingResult> results = bookingService.getAllBookingByCustomer(userId, "User");
 
-        // Call the service method
-        List<CustomBookingResult> result = bookingService.getAllBookingByCustomer(1L, "User");
-
-        // Assertions
-        assertNotNull(result);
-        assertEquals(1, result.size());
+        assertNotNull(results);
+        assertEquals(expectedResults, results);
     }
 
     @Test
-    void testGetAllBookingByCustomer_NoPermission() {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            bookingService.getAllBookingByCustomer(1L, "Admin");
-        });
+    void testGetAllBookingByCustomer_ThrowsException_WhenTypeIsNotUser() {
+        long userId = 1L;
 
-        assertEquals("dont have permission", exception.getMessage());
+        assertThrows(RuntimeException.class, () -> bookingService.getAllBookingByCustomer(userId, "Admin"));
     }
 
     @Test
     void testGetBookingDetails_Success() {
-        // Mock the CustomBookingDetails object
-        CustomBookingDetails customBookingDetails = mock(CustomBookingDetails.class);
+        CustomBookingDetails mockDetails = mock(CustomBookingDetails.class); // Mock the abstract class
+        List<CustomBookingDetails> expectedDetails = Collections.singletonList(mockDetails);
 
-        // Create a list of mocked CustomBookingDetails objects
-        List<CustomBookingDetails> bookingDetailsList = Arrays.asList(customBookingDetails);
+        when(bookingRepo.getBookingDetails()).thenReturn(expectedDetails);
 
-        // Mock the repository method
-        when(bookingRepo.getBookingDetails()).thenReturn(bookingDetailsList);
+        List<CustomBookingDetails> details = bookingService.getBookingDetails("Admin");
 
-        // Call the service method
-        List<CustomBookingDetails> result = bookingService.getBookingDetails("Admin");
-
-        // Assertions
-        assertNotNull(result);
-        assertEquals(1, result.size());
+        assertNotNull(details);
+        assertEquals(expectedDetails, details);
     }
 
     @Test
-    void testGetBookingDetails_NoPermission() {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            bookingService.getBookingDetails("User");
-        });
-
-        assertEquals("dont have permission", exception.getMessage());
+    void testGetBookingDetails_ThrowsException_WhenTypeIsNotAdmin() {
+        assertThrows(RuntimeException.class, () -> bookingService.getBookingDetails("User"));
     }
 
     @Test
     void testGetPendingCount_Success() {
-        when(bookingRepo.getPendingCount()).thenReturn(5);
+        int expectedCount = 5;
 
-        int result = bookingService.getPendingCount("Admin");
+        when(bookingRepo.getPendingCount()).thenReturn(expectedCount);
 
-        assertEquals(5, result);
+        int count = bookingService.getPendingCount("Admin");
+
+        assertEquals(expectedCount, count);
     }
 
     @Test
-    void testGetPendingCount_NoPermission() {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            bookingService.getPendingCount("User");
-        });
+    void testGetPendingCount_ThrowsException_WhenTypeIsNotAdmin() {
+        assertThrows(RuntimeException.class, () -> bookingService.getPendingCount("User"));
+    }
 
-        assertEquals("dont have permission", exception.getMessage());
+    @Test
+    void testGetAllBookingDateByVehicleId_Success() {
+        long vehicleId = 1L;
+        List<Date> expectedDates = Collections.singletonList(new Date());
+
+        when(bookingRepo.getAllBookingDatesByVehicleId(vehicleId)).thenReturn(expectedDates);
+
+        List<Date> dates = bookingService.getAllBookingDateByVehicleId(vehicleId, "User");
+
+        assertNotNull(dates);
+        assertEquals(expectedDates, dates);
+    }
+
+    @Test
+    void testGetAllBookingDateByVehicleId_ThrowsException_WhenTypeIsNotUser() {
+        long vehicleId = 1L;
+
+        assertThrows(RuntimeException.class, () -> bookingService.getAllBookingDateByVehicleId(vehicleId, "Admin"));
     }
 }

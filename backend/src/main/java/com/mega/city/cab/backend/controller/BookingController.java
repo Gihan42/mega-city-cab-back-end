@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -26,9 +27,7 @@ public class BookingController {
     @PostMapping(path = "/save")
     public ResponseEntity<StandardResponse> saveBooking(@RequestBody BookingDto dto,
                                                         @RequestAttribute String type){
-        System.out.println("awa"+dto);
         Booking booking = bookingService.saveBooking(dto, type);
-        System.out.println(booking);
         return new ResponseEntity<>(
                 new StandardResponse(200,"Booking saved",booking),
                 HttpStatus.OK
@@ -76,6 +75,17 @@ public class BookingController {
                 HttpStatus.OK
         );
 
+    }
+
+//    get all booking dates by vehicle id
+    @GetMapping(params = {"vehicleId"})
+    public ResponseEntity<StandardResponse> getAllBookingDateByVehicleId(@RequestParam long vehicleId,@RequestAttribute String type){
+        List<Date> allBookingDateByVehicleId = bookingService.getAllBookingDateByVehicleId(vehicleId, type);
+
+        return new ResponseEntity<>(
+                new StandardResponse(200,"get all booking date by vehicle Id",allBookingDateByVehicleId),
+                HttpStatus.OK
+        );
     }
 
 
