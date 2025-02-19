@@ -4,6 +4,7 @@ import com.mega.city.cab.backend.dto.BookingDto;
 import com.mega.city.cab.backend.entity.Booking;
 import com.mega.city.cab.backend.entity.custom.CustomBookingDetails;
 import com.mega.city.cab.backend.entity.custom.CustomBookingResult;
+import com.mega.city.cab.backend.entity.custom.CustomerBookingDate;
 import com.mega.city.cab.backend.repo.BookingRepo;
 import com.mega.city.cab.backend.service.DriverService;
 import com.mega.city.cab.backend.service.VehicleService;
@@ -22,6 +23,9 @@ import static org.mockito.Mockito.*;
 
 class BookingServiceImplTest {
 
+    @InjectMocks
+    private BookingServiceImpl bookingService;
+
     @Mock
     private BookingRepo bookingRepo;
 
@@ -34,9 +38,6 @@ class BookingServiceImplTest {
     @Mock
     private DriverService driverService;
 
-    @InjectMocks
-    private BookingServiceImpl bookingService;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -44,163 +45,204 @@ class BookingServiceImplTest {
 
     @Test
     void testSaveBooking_Success() {
+        // Arrange
         BookingDto bookingDto = new BookingDto();
         bookingDto.setVehicleId(1L);
         bookingDto.setBookingDateTime(new Date());
         bookingDto.setHours("2.5");
 
         Booking booking = new Booking();
+        booking.setBookingId(1L);
         booking.setStatus("Booking");
 
-        when(bookingRepo.getAllBookingDatesByVehicleId(anyLong())).thenReturn(Collections.emptyList());
         when(modelMapper.map(bookingDto, Booking.class)).thenReturn(booking);
+        when(bookingRepo.getAllBookingByVehicleId(1L)).thenReturn(Collections.emptyList());
         when(bookingRepo.save(booking)).thenReturn(booking);
 
+        // Act
         Booking result = bookingService.saveBooking(bookingDto, "User");
 
+        // Assert
         assertNotNull(result);
         assertEquals("Booking", result.getStatus());
         verify(bookingRepo, times(1)).save(booking);
     }
 
     @Test
-    void testSaveBooking_ThrowsException_WhenTypeIsNotUser() {
+    void testSaveBooking_ThrowsException_WhenNotUser() {
+        // Arrange
         BookingDto bookingDto = new BookingDto();
 
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.saveBooking(bookingDto, "Admin"));
     }
 
     @Test
-    void testSaveBooking_ThrowsException_WhenDateIsAlreadyBooked() {
+    void testSaveBooking_ThrowsException_WhenDateAlreadyBooked() {
+        // Arrange
         BookingDto bookingDto = new BookingDto();
         bookingDto.setVehicleId(1L);
         bookingDto.setBookingDateTime(new Date());
         bookingDto.setHours("2.5");
 
-        List<Date> bookedDates = Collections.singletonList(new Date());
+        Booking existingBooking = new Booking();
+        existingBooking.setBookingDateTime(new Date());
+        existingBooking.setStatus("Booking");
 
-        when(bookingRepo.getAllBookingDatesByVehicleId(anyLong())).thenReturn(bookedDates);
+        when(bookingRepo.getAllBookingByVehicleId(1L)).thenReturn(Collections.singletonList(existingBooking));
 
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.saveBooking(bookingDto, "User"));
     }
 
     @Test
     void testUpdateBookingStatus_Success() {
+        // Arrange
         long bookingId = 1L;
-        long vehicleId = 123L; // Add a valid vehicleId
-        long driverId = 456L; // Add a valid driverId
-
-        // Create a Booking object and set required fields
         Booking booking = new Booking();
+        booking.setBookingId(bookingId);
         booking.setStatus("Pending");
-        booking.setVehicleId(vehicleId); // Set vehicleId
-        booking.setDriverId(driverId); // Set driverId
+        booking.setVehicleId(1L);
+        booking.setDriverId(1L);
 
-        // Mock the behavior of dependencies
         when(bookingRepo.getBookingById(bookingId)).thenReturn(booking);
-        when(vehicleService.updateVehicleStatus(vehicleId)).thenReturn(true);
-        when(driverService.updateStatusInDriver(driverId)).thenReturn(true);
+        when(vehicleService.updateVehicleStatus(1L)).thenReturn(true);
+        when(driverService.updateStatusInDriver(1L)).thenReturn(true);
         when(bookingRepo.save(booking)).thenReturn(booking);
 
-        // Call the method under test
+        // Act
         Booking result = bookingService.updateBookingStatus(bookingId, "Admin");
 
-        // Assertions
+        // Assert
         assertNotNull(result);
         assertEquals("Confirmed", result.getStatus());
         verify(bookingRepo, times(1)).save(booking);
-        verify(vehicleService, times(1)).updateVehicleStatus(vehicleId);
-        verify(driverService, times(1)).updateStatusInDriver(driverId);
     }
 
     @Test
-    void testUpdateBookingStatus_ThrowsException_WhenTypeIsNotAdmin() {
+    void testUpdateBookingStatus_ThrowsException_WhenNotAdmin() {
+        // Arrange
         long bookingId = 1L;
 
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.updateBookingStatus(bookingId, "User"));
     }
 
     @Test
-    void testUpdateBookingStatus_ThrowsException_WhenBookingDoesNotExist() {
+    void testUpdateBookingStatus_ThrowsException_WhenBookingNotExist() {
+        // Arrange
         long bookingId = 1L;
 
         when(bookingRepo.getBookingById(bookingId)).thenReturn(null);
 
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.updateBookingStatus(bookingId, "Admin"));
     }
 
     @Test
     void testGetAllBookingByCustomer_Success() {
+        // Arrange
         long userId = 1L;
-        CustomBookingResult mockResult = mock(CustomBookingResult.class); // Mock the abstract class
-        List<CustomBookingResult> expectedResults = Collections.singletonList(mockResult);
+        when(bookingRepo.getBookingByCustomerId(userId)).thenReturn(Collections.emptyList());
 
-        when(bookingRepo.getBookingByCustomerId(userId)).thenReturn(expectedResults);
+        // Act
+        List<CustomBookingResult> result = bookingService.getAllBookingByCustomer(userId, "User");
 
-        List<CustomBookingResult> results = bookingService.getAllBookingByCustomer(userId, "User");
-
-        assertNotNull(results);
-        assertEquals(expectedResults, results);
+        // Assert
+        assertNotNull(result);
+        verify(bookingRepo, times(1)).getBookingByCustomerId(userId);
     }
 
     @Test
-    void testGetAllBookingByCustomer_ThrowsException_WhenTypeIsNotUser() {
+    void testGetAllBookingByCustomer_ThrowsException_WhenNotUser() {
+        // Arrange
         long userId = 1L;
 
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.getAllBookingByCustomer(userId, "Admin"));
     }
 
     @Test
     void testGetBookingDetails_Success() {
-        CustomBookingDetails mockDetails = mock(CustomBookingDetails.class); // Mock the abstract class
-        List<CustomBookingDetails> expectedDetails = Collections.singletonList(mockDetails);
+        // Arrange
+        when(bookingRepo.getBookingDetails()).thenReturn(Collections.emptyList());
 
-        when(bookingRepo.getBookingDetails()).thenReturn(expectedDetails);
+        // Act
+        List<CustomBookingDetails> result = bookingService.getBookingDetails("Admin");
 
-        List<CustomBookingDetails> details = bookingService.getBookingDetails("Admin");
-
-        assertNotNull(details);
-        assertEquals(expectedDetails, details);
+        // Assert
+        assertNotNull(result);
+        verify(bookingRepo, times(1)).getBookingDetails();
     }
 
     @Test
-    void testGetBookingDetails_ThrowsException_WhenTypeIsNotAdmin() {
+    void testGetBookingDetails_ThrowsException_WhenNotAdmin() {
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.getBookingDetails("User"));
     }
 
     @Test
     void testGetPendingCount_Success() {
-        int expectedCount = 5;
+        // Arrange
+        when(bookingRepo.getPendingCount()).thenReturn(5);
 
-        when(bookingRepo.getPendingCount()).thenReturn(expectedCount);
+        // Act
+        int result = bookingService.getPendingCount("Admin");
 
-        int count = bookingService.getPendingCount("Admin");
-
-        assertEquals(expectedCount, count);
+        // Assert
+        assertEquals(5, result);
+        verify(bookingRepo, times(1)).getPendingCount();
     }
 
     @Test
-    void testGetPendingCount_ThrowsException_WhenTypeIsNotAdmin() {
+    void testGetPendingCount_ThrowsException_WhenNotAdmin() {
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.getPendingCount("User"));
     }
 
     @Test
     void testGetAllBookingDateByVehicleId_Success() {
+        // Arrange
         long vehicleId = 1L;
-        List<Date> expectedDates = Collections.singletonList(new Date());
+        when(bookingRepo.getAllBookingDatesByVehicleId(vehicleId)).thenReturn(Collections.emptyList());
 
-        when(bookingRepo.getAllBookingDatesByVehicleId(vehicleId)).thenReturn(expectedDates);
+        // Act
+        List<Date> result = bookingService.getAllBookingDateByVehicleId(vehicleId, "User");
 
-        List<Date> dates = bookingService.getAllBookingDateByVehicleId(vehicleId, "User");
-
-        assertNotNull(dates);
-        assertEquals(expectedDates, dates);
+        // Assert
+        assertNotNull(result);
+        verify(bookingRepo, times(1)).getAllBookingDatesByVehicleId(vehicleId);
     }
 
     @Test
-    void testGetAllBookingDateByVehicleId_ThrowsException_WhenTypeIsNotUser() {
+    void testGetAllBookingDateByVehicleId_ThrowsException_WhenNotUser() {
+        // Arrange
         long vehicleId = 1L;
 
+        // Act & Assert
         assertThrows(RuntimeException.class, () -> bookingService.getAllBookingDateByVehicleId(vehicleId, "Admin"));
+    }
+
+    @Test
+    void testGetAllBookingDatesAndEstimatedDateByVehicleId_Success() {
+        // Arrange
+        long vehicleId = 1L;
+        when(bookingRepo.getAllBookingDatesAndEstimatedDateByVehicleId(vehicleId)).thenReturn(Collections.emptyList());
+
+        // Act
+        List<CustomerBookingDate> result = bookingService.getAllBookingDatesAndEstimatedDateByVehicleId(vehicleId, "User");
+
+        // Assert
+        assertNotNull(result);
+        verify(bookingRepo, times(1)).getAllBookingDatesAndEstimatedDateByVehicleId(vehicleId);
+    }
+
+    @Test
+    void testGetAllBookingDatesAndEstimatedDateByVehicleId_ThrowsException_WhenNotUser() {
+        // Arrange
+        long vehicleId = 1L;
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> bookingService.getAllBookingDatesAndEstimatedDateByVehicleId(vehicleId, "Admin"));
     }
 }

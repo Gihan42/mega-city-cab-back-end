@@ -9,4 +9,6 @@ public interface CommentCustomResult {
     String getComment();
     Date getDate();
     String getStatus();
+
+
 }

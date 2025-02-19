@@ -41,6 +41,8 @@ public class Booking {
     @NonNull
     @Column(name = "amount")
     private double amount;
+    @Column(name = "estimatedBookingDateTime")
+    private Date estimatedBookingDateTime;
     @NonNull
     @Column(name = "status")
     private String status;

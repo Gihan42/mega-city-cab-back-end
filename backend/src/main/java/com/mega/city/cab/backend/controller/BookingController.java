@@ -5,6 +5,7 @@ import com.mega.city.cab.backend.dto.CommentsDto;
 import com.mega.city.cab.backend.entity.Booking;
 import com.mega.city.cab.backend.entity.custom.CustomBookingDetails;
 import com.mega.city.cab.backend.entity.custom.CustomBookingResult;
+import com.mega.city.cab.backend.entity.custom.CustomerBookingDate;
 import com.mega.city.cab.backend.service.BookingService;
 import com.mega.city.cab.backend.util.response.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,11 +80,11 @@ public class BookingController {
 
 //    get all booking dates by vehicle id
     @GetMapping(params = {"vehicleId"})
-    public ResponseEntity<StandardResponse> getAllBookingDateByVehicleId(@RequestParam long vehicleId,@RequestAttribute String type){
-        List<Date> allBookingDateByVehicleId = bookingService.getAllBookingDateByVehicleId(vehicleId, type);
+    public ResponseEntity<StandardResponse> getAllBookingDatesAndEstimatedDateByVehicleId(@RequestParam long vehicleId,@RequestAttribute String type){
+        List<CustomerBookingDate> allBookingDatesAndEstimatedDateByVehicleId = bookingService.getAllBookingDatesAndEstimatedDateByVehicleId(vehicleId, type);
 
         return new ResponseEntity<>(
-                new StandardResponse(200,"get all booking date by vehicle Id",allBookingDateByVehicleId),
+                new StandardResponse(200,"get all booking date and estimated date by vehicle Id",allBookingDatesAndEstimatedDateByVehicleId),
                 HttpStatus.OK
         );
     }

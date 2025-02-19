@@ -3,6 +3,7 @@ package com.mega.city.cab.backend.repo;
 import com.mega.city.cab.backend.entity.Booking;
 import com.mega.city.cab.backend.entity.custom.CustomBookingDetails;
 import com.mega.city.cab.backend.entity.custom.CustomBookingResult;
+import com.mega.city.cab.backend.entity.custom.CustomerBookingDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -64,4 +65,12 @@ public interface BookingRepo extends JpaRepository<Booking,Long> {
     @Query(value = "select booking_date_time from booking where vehicle_id=:vehicleId and status='Booking'",nativeQuery = true)
     List<Date> getAllBookingDatesByVehicleId(@Param("vehicleId")long vehicleId);
 
+    @Query(value = "select estimated_booking_date_time from booking where vehicle_id=:vehicleId and status='Booking'",nativeQuery = true)
+    List<Date> getAllEstimatedBookingDateTimeByVehicleId(@Param("vehicleId")long vehicleId);
+
+    @Query(value = "select booking_date_time as bookingDate,estimated_booking_date_time as estimatedBookingDate from booking where vehicle_id=:vehicleId and status='Booking'",nativeQuery = true)
+    List<CustomerBookingDate> getAllBookingDatesAndEstimatedDateByVehicleId(@Param("vehicleId")long vehicleId);
+
+    @Query(value = "select * from booking where vehicle_id=:vehicleId",nativeQuery = true)
+    List<Booking> getAllBookingByVehicleId(@Param("vehicleId")long vehicleId);
 }

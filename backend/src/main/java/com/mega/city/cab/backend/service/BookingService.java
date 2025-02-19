@@ -4,6 +4,7 @@ import com.mega.city.cab.backend.dto.BookingDto;
 import com.mega.city.cab.backend.entity.Booking;
 import com.mega.city.cab.backend.entity.custom.CustomBookingDetails;
 import com.mega.city.cab.backend.entity.custom.CustomBookingResult;
+import com.mega.city.cab.backend.entity.custom.CustomerBookingDate;
 
 import java.util.Date;
 import java.util.List;
@@ -15,4 +16,5 @@ public interface BookingService {
     List<CustomBookingDetails> getBookingDetails(String type);
     int getPendingCount(String type);
     List<Date> getAllBookingDateByVehicleId(long vehicleId,String type);
+    List<CustomerBookingDate> getAllBookingDatesAndEstimatedDateByVehicleId(long vehicleId,String type);
 }

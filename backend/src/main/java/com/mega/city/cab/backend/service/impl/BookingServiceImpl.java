@@ -4,6 +4,7 @@ import com.mega.city.cab.backend.dto.BookingDto;
 import com.mega.city.cab.backend.entity.Booking;
 import com.mega.city.cab.backend.entity.custom.CustomBookingDetails;
 import com.mega.city.cab.backend.entity.custom.CustomBookingResult;
+import com.mega.city.cab.backend.entity.custom.CustomerBookingDate;
 import com.mega.city.cab.backend.repo.BookingRepo;
 import com.mega.city.cab.backend.service.BookingService;
 import com.mega.city.cab.backend.service.DriverService;
@@ -14,7 +15,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -60,16 +64,25 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-
-
-/*
-    @Override
+/*    @Override
     public Booking saveBooking(BookingDto booking, String type) {
         if (!type.equals("User")){
             throw new RuntimeException("dont have permission");
         }
         List<Date> allBookingDatesByVehicleId =
                 bookingRepo.getAllBookingDatesByVehicleId(booking.getVehicleId());
+
+        Date bookingDate = booking.getBookingDateTime();
+        double hoursToAdd = Double.parseDouble(booking.getHours());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(bookingDate);
+
+        int hours = (int) hoursToAdd;
+        int minutes = (int) ((hoursToAdd - hours) * 60);
+
+        calendar.add(Calendar.HOUR, hours);
+        calendar.add(Calendar.MINUTE, minutes);
+        Date updatedBookingDate = calendar.getTime();
         for (Date date : allBookingDatesByVehicleId) {
             if (booking.getBookingDateTime().equals(date)) {
                 throw new RuntimeException("cannot booking this day");
@@ -77,44 +90,117 @@ public class BookingServiceImpl implements BookingService {
         }
         Booking map = modelMapper.map(booking, Booking.class);
         map.setStatus("Booking");
-        System.out.println("map-"+map);
+        map.setEstimatedBookingDateTime(updatedBookingDate);
         return  bookingRepo.save(map);
-    }
-*/
+    }*/
 
-    @Override
+/*    @Override
     public Booking saveBooking(BookingDto booking, String type) {
         if (!type.equals("User")) {
-            throw new RuntimeException("dont have permission");
+            throw new RuntimeException("Don't have permission");
         }
 
         List<Date> allBookingDatesByVehicleId =
                 bookingRepo.getAllBookingDatesByVehicleId(booking.getVehicleId());
+
+        List<Date> allEstimatedBookingDateTimeByVehicleId =
+                bookingRepo.getAllEstimatedBookingDateTimeByVehicleId(booking.getVehicleId());
+
         Date bookingDate = booking.getBookingDateTime();
         double hoursToAdd = Double.parseDouble(booking.getHours());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(bookingDate);
 
+        int hours = (int) hoursToAdd;
+        int minutes = (int) ((hoursToAdd - hours) * 60);
+
+        calendar.add(Calendar.HOUR, hours);
+        calendar.add(Calendar.MINUTE, minutes);
+        Date updatedBookingDate = calendar.getTime();
+
+        System.out.println("updatedBookingDate-" + updatedBookingDate);
+
+        for (int i = 0; i < allBookingDatesByVehicleId.size(); i++) {
+            Date existingDate = allBookingDatesByVehicleId.get(i);
+            Date estimatedTime = allEstimatedBookingDateTimeByVehicleId.get(i);
+
+            System.out.println("existingDate-" + existingDate);
+            System.out.println("estimatedTime-" + estimatedTime);
+
+            // 🚨 Prevent booking before an existing booking start date
+            if (!bookingDate.before(existingDate) && updatedBookingDate.before(existingDate)) {
+                throw new RuntimeException("Cannot book before an existing booking date.");
+            }
+
+            // 🚨 Prevent booking that starts within an existing booking period
+            if (bookingDate.after(existingDate) && bookingDate.before(estimatedTime)) {
+                throw new RuntimeException("Cannot book. The booking date falls within an existing booking period.");
+            }
+
+            // 🚨 Prevent overlapping updated booking date with existing bookings
+            if (updatedBookingDate.after(existingDate) && updatedBookingDate.before(estimatedTime)) {
+                throw new RuntimeException("Cannot book. The updated booking date overlaps with an existing booking.");
+            }
+
+            // 🚨 Prevent booking exactly on an existing booking date
+            if (bookingDate.equals(existingDate) || updatedBookingDate.equals(existingDate)) {
+                throw new RuntimeException("Cannot book on this day. Date already booked.");
+            }
+        }
+
+        Booking map = modelMapper.map(booking, Booking.class);
+        map.setStatus("Booking");
+        map.setEstimatedBookingDateTime(updatedBookingDate);
+        return bookingRepo.save(map);
+    }*/
+
+
+    @Override
+    public Booking saveBooking(BookingDto booking, String type) {
+        if (!type.equals("User")) {
+            throw new RuntimeException("Don't have permission");
+        }
+
+        List<Date> allBookingDatesByVehicleId = bookingRepo.getAllBookingDatesByVehicleId(booking.getVehicleId());
+        List<Booking> allBookingByVehicleId = bookingRepo.getAllBookingByVehicleId(booking.getVehicleId());
+
+        Date bookingDate = booking.getBookingDateTime();
+        double hoursToAdd = Double.parseDouble(booking.getHours());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(bookingDate);
 
         int hours = (int) hoursToAdd;
         int minutes = (int) ((hoursToAdd - hours) * 60);
 
-
         calendar.add(Calendar.HOUR, hours);
         calendar.add(Calendar.MINUTE, minutes);
-        Date updateBookingdDate = calendar.getTime();
-//        System.out.println("Updated Booking Date: " + updateBookingdDate);
-        for (Date existingDate : allBookingDatesByVehicleId) {
+        Date updatedBookingDate = calendar.getTime();
 
-            if (bookingDate.equals(existingDate) || updateBookingdDate.equals(existingDate)) {
-                throw new RuntimeException("Cannot book on this day. Date already booked.");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        // Format the current booking date to compare only the date part
+        String nowBookingDate = sdf.format(bookingDate);
+
+        for (Booking bookings : allBookingByVehicleId) {
+            // Format the existing booking date to compare only the date part
+            String formattedDate = sdf.format(bookings.getBookingDateTime());
+
+//            System.out.println("Formatted Date: " + formattedDate);
+//            System.out.println("nowBookingDate Date: " + nowBookingDate);
+
+            // Check if the dates are the same (ignoring time)
+            if (formattedDate.equals(nowBookingDate) &&
+                    bookings.getStatus().equals("Booking") ||
+                    bookings.getStatus().equals("Pending")){
+                throw new RuntimeException("Cannot book the vehicle on the same day. The date is already booked.");
             }
-            if (updateBookingdDate.after(existingDate)) {
-                throw new RuntimeException("Cannot book. Overlapping with existing booking.");
-            }
+
         }
+
+        // If the date is not already booked, proceed to save the booking
         Booking map = modelMapper.map(booking, Booking.class);
         map.setStatus("Booking");
+        map.setEstimatedBookingDateTime(updatedBookingDate);
         return bookingRepo.save(map);
     }
 
@@ -166,5 +252,13 @@ public class BookingServiceImpl implements BookingService {
             throw new RuntimeException("dont have permission");
         }
         return  bookingRepo.getAllBookingDatesByVehicleId(vehicleId);
+    }
+
+    @Override
+    public List<CustomerBookingDate> getAllBookingDatesAndEstimatedDateByVehicleId(long vehicleId, String type) {
+        if (!type.equals("User")){
+            throw new RuntimeException("dont have permission");
+        }
+        return bookingRepo.getAllBookingDatesAndEstimatedDateByVehicleId(vehicleId);
     }
 }
