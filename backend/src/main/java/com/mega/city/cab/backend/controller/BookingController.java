@@ -89,5 +89,13 @@ public class BookingController {
         );
     }
 
+    @PutMapping(params = {"pId"})
+    public ResponseEntity<StandardResponse> updateStatusNotConfirmBookingWherePaymentId(@RequestParam long pId, @RequestAttribute String type){
+        Booking booking = bookingService.updateStatusNotConfirmBookingWherePaymentId(pId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"updated status",booking),
+                HttpStatus.OK
+        );
+    }
 
 }

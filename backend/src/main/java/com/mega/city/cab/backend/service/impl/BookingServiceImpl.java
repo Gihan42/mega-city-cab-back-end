@@ -2,10 +2,12 @@ package com.mega.city.cab.backend.service.impl;
 
 import com.mega.city.cab.backend.dto.BookingDto;
 import com.mega.city.cab.backend.entity.Booking;
+import com.mega.city.cab.backend.entity.Payment;
 import com.mega.city.cab.backend.entity.custom.CustomBookingDetails;
 import com.mega.city.cab.backend.entity.custom.CustomBookingResult;
 import com.mega.city.cab.backend.entity.custom.CustomerBookingDate;
 import com.mega.city.cab.backend.repo.BookingRepo;
+import com.mega.city.cab.backend.repo.PaymentRepo;
 import com.mega.city.cab.backend.service.BookingService;
 import com.mega.city.cab.backend.service.DriverService;
 import com.mega.city.cab.backend.service.VehicleService;
@@ -39,6 +41,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     DriverService driverService;
+
+    @Autowired
+    PaymentRepo paymentRepo;
 
     @Scheduled(cron = "0 * * * * ?")
     public void checkAndUpdateBookingStatus() {
@@ -191,7 +196,7 @@ public class BookingServiceImpl implements BookingService {
             // Check if the dates are the same (ignoring time)
             if (formattedDate.equals(nowBookingDate) &&
                     bookings.getStatus().equals("Booking") ||
-                    bookings.getStatus().equals("Pending")){
+                    bookings.getStatus().equals("Pending") || bookings.getStatus().equals("Booking not close")){
                 throw new RuntimeException("Cannot book the vehicle on the same day. The date is already booked.");
             }
 
@@ -199,28 +204,61 @@ public class BookingServiceImpl implements BookingService {
 
         // If the date is not already booked, proceed to save the booking
         Booking map = modelMapper.map(booking, Booking.class);
-        map.setStatus("Booking");
+        map.setStatus("Booking not close");
         map.setEstimatedBookingDateTime(updatedBookingDate);
         return bookingRepo.save(map);
     }
 
     @Override
     public Booking updateBookingStatus(long bookingId, String type) {
-        if (!type.equals("Admin")){
-            throw new RuntimeException("dont have permission");
+        if (!type.equals("Admin")) {
+            throw new RuntimeException("Don't have permission");
         }
+
+        System.out.println(bookingId);
         Booking bookingById = bookingRepo.getBookingById(bookingId);
-        if(!Objects.equals(bookingById,null) && bookingById.getStatus().equals("Pending")){
+
+        if (bookingById == null) {
+            throw new RuntimeException("Booking not found");
+        }
+
+        System.out.println(bookingById.getStatus());
+
+        if (bookingById.getStatus().equals("Pending")) {
             boolean updatedVehicleStatus = vehicleService.updateVehicleStatus(bookingById.getVehicleId());
             boolean updatedDriverStatus = driverService.updateStatusInDriver(bookingById.getDriverId());
-            if(updatedVehicleStatus && updatedDriverStatus){
+
+            if (updatedVehicleStatus && updatedDriverStatus) {
                 bookingById.setStatus("Confirmed");
                 return bookingRepo.save(bookingById);
             }
-            throw new RuntimeException("vehicle or diver not changed");
+            throw new RuntimeException("Vehicle or driver status not updated");
         }
-        throw new RuntimeException("booking not exist");
+        else if (bookingById.getStatus().equals("Booking not close")) {
+            return deleteBooking(bookingId);
+        }
+
+        throw new RuntimeException("Invalid booking status");
     }
+
+    private Booking deleteBooking(long bookingId) {
+        System.out.println("Deleting booking...");
+
+        Booking bookingById = bookingRepo.getBookingById(bookingId);
+        Payment allPaymentByBookingId = paymentRepo.getAllPaymentByBookingId(bookingId);
+
+        if (bookingById == null) {
+            throw new RuntimeException("Booking not found");
+        }
+
+        if (allPaymentByBookingId != null) {
+            paymentRepo.delete(allPaymentByBookingId);
+        }
+
+        bookingRepo.delete(bookingById);
+        return bookingById;
+    }
+
 
     @Override
     public List<CustomBookingResult> getAllBookingByCustomer(long userId, String type) {
@@ -261,4 +299,20 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookingRepo.getAllBookingDatesAndEstimatedDateByVehicleId(vehicleId);
     }
+
+    @Override
+    public Booking updateStatusNotConfirmBookingWherePaymentId(long paymentId, String type) {
+        if (!type.equals("User")){
+            throw new RuntimeException("dont have permission");
+        }
+        Payment paymentById = paymentRepo.getPaymentById(paymentId);
+        if(!Objects.equals(paymentById,null)){
+            Booking bookingById = bookingRepo.getBookingById(paymentById.getBookingId());
+            bookingById.setStatus("Booking");
+            return bookingById;
+        }
+        throw new RuntimeException("payment not exist");
+    }
+
+
 }

@@ -93,7 +93,6 @@ public class PaymentController {
         @GetMapping(params = {"pId"})
         public ResponseEntity<StandardResponse> getPaymentStatusById(@RequestParam long pId,
                                                                      @RequestAttribute String type){
-            System.out.println("awa");
             String paymentStatusById = paymentService.getPaymentStatusById(pId, type);
             return new ResponseEntity<>(
                     new StandardResponse(200,"payment status",paymentStatusById),

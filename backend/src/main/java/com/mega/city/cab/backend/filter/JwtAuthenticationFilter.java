@@ -36,10 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = null;
         Map<String, Long> map = null;
         try {
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){  //authorizationHeader meka null ntnm saha header eka patan ganiddi Bearer tyda kiyla blanawa
-                jwt = authorizationHeader.substring(7); //authorizationHeader eke character 7k tyda blanwa  'Bearer' ha space eka tynam mul character 7 adu krla anit tika token ekt gnna kiynwa
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
+                jwt = authorizationHeader.substring(7);
                 try {
-                    email = jwtUtil.extractUser(jwt); //user name ek extract krala denwa
+                    email = jwtUtil.extractUser(jwt);
                     Claims claims = jwtUtil.extractAllClaims(jwt);
                     request.setAttribute("user",email);
                     request.setAttribute("type",claims.get("type"));

@@ -17,4 +17,7 @@ public interface BookingService {
     int getPendingCount(String type);
     List<Date> getAllBookingDateByVehicleId(long vehicleId,String type);
     List<CustomerBookingDate> getAllBookingDatesAndEstimatedDateByVehicleId(long vehicleId,String type);
+    Booking updateStatusNotConfirmBookingWherePaymentId(long paymentId,String type);
+
+
 }

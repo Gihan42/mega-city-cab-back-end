@@ -89,4 +89,11 @@ public interface PaymentRepo extends JpaRepository<Payment,Long> {
     @Query(value = "select status from payment where payment_id =:paymentId",nativeQuery = true)
     String getPaymentStatusById(@Param("paymentId") long paymentId);
 
+    @Query(value = "select * from payment where payment_id=:pId",nativeQuery = true)
+    Payment getPaymentById(@Param("pId")long pId);
+
+    @Query(value = "select * from payment where booking_id= :bookingId",nativeQuery = true)
+    Payment getAllPaymentByBookingId(@Param("bookingId") long bookingId);
+
+
 }

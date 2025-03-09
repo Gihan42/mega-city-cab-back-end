@@ -20,7 +20,6 @@ public class CategoryController {
     CategoryService categoryService;
 
     //get all categories
-    //    get all comments with user
     @GetMapping(path = "/allCategories")
     public ResponseEntity<StandardResponse> getAllCategories(@RequestAttribute String type){
         List<String> allCategory = categoryService.getAllCategory(type);
